@@ -53,8 +53,11 @@ public class Program {
 		//testUnicode();
 		//testJDBC();
 		//testText();
+        //testSegment();
 		try {
-			testSegment();
+			testGui();
+
+            System.out.print("[INFO]Main function exits.\n");
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -67,6 +70,11 @@ public class Program {
 		//testCorpus();
 
 	}
+
+
+    static void testGui() {
+        chb.gui.ControlPanel.work();
+    }
 	
 	static void testCorpus() {
 		DataSource ds = DataSource.CreateConnection("any", "wordbase", "microcore", "19871013", "UTF8");
