@@ -49,16 +49,18 @@ public class Program {
 		//testUnicode();
 		//testJDBC();
 		//testText();
-		try {
-			testSegment();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			testSegment();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
 		//testPlot();
 		//testPlot2();
 		//AsciiChineseNumber.test();
 		
+		System.out.println(Short.MAX_VALUE);
+		System.out.println(Short.MIN_VALUE);
 	}
 	class SortPack {
 		public double X = 0;
