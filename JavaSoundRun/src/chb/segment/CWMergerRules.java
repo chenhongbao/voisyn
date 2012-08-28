@@ -47,6 +47,7 @@ public class CWMergerRules extends CWMerger {
 					beg = MergeStep(words, beg, end, word);
 					if (beg == -1)
 						break;
+					
 					tmp.add(word);
 				}
 
@@ -175,6 +176,8 @@ public class CWMergerRules extends CWMerger {
 			word.End = (long) end;
 
 		}
+		
+		word.Word += "|";
 
 		return end + 1;
 	}
@@ -214,7 +217,7 @@ public class CWMergerRules extends CWMerger {
 		int index = start;
 		String tmp = "";
 		do {
-			tmp += words.get(index).Word;
+			tmp += words.get(index).Word +"|";
 			index += 1;
 			
 			if (index >= words.size())
