@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
+
 import javax.sound.sampled.AudioFormat;
 import javax.swing.JFrame;
 
@@ -30,7 +32,9 @@ import chb.segment.CWSegment;
 import chb.segment.CWSolverDP;
 import chb.segment.CWWord;
 import chb.segment.CWWordComparater;
+import chb.synthesis.VoiceSynthesizer;
 import chb.wave.Wave;
+import chb.math.Numerics;
 import chb.plot.*;
 
 
@@ -58,10 +62,44 @@ public class Program {
 		//testPlot();
 		//testPlot2();
 		//AsciiChineseNumber.test();
-		
-		System.out.println(Short.MAX_VALUE);
-		System.out.println(Short.MIN_VALUE);
+		//testNumerics();
+		testSynth();
+
 	}
+	
+	static void testSynth() {
+		VoiceSynthesizer vs = new VoiceSynthesizer();
+		int[] x = new int[]{0, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
+		int[] y = new int[]{3,4,8,9,1,4,5,1,1,3, 10, 11, 14,17,12,1,1,3,19,22};
+		int[] z =vs.GetMix(x, y);
+		
+		for(int i: z) {
+			System.out.print(i);
+			System.out.print(" ");
+		}
+		
+		System.out.print("\n");
+	}
+	
+	static void testNumerics() {
+		double[] H = Numerics.GaussWin(64, 3.0D);
+		System.out.println(H.length);
+		for(int i = 0;  i<H.length; ++i) {
+			System.out.print(i+1);
+			System.out.print("\t:\t");
+			System.out.println(H[i]);
+		}
+		
+		int a = 9;
+		int b = 5;
+		System.out.println(1.0D*b/a);
+		
+		Random rd = new Random();
+		System.out.println(rd.nextInt());
+		System.out.println(rd.nextDouble());
+		
+	}
+	
 	class SortPack {
 		public double X = 0;
 		public double Y = 0;
