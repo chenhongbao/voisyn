@@ -244,6 +244,16 @@ public class VoiceSynthesizer {
 		return y;
 	}
 
+	/**
+	 * Shorten or elongate the first half and second half of the samples, separated
+	 * by the acme in the samples.
+	 * @param allrate the total factor.
+	 * @param before_peak_rate the factor before the acme.
+	 * @param after_peak_rate the factor before the acme.
+	 * @param x the samples.
+	 * @param peakx the indexes of all peaks in the samples.
+	 * @return the extended or shortened samples.
+	 */
 	public short[] GetNarrow(double allrate, double before_peak_rate,
 			double after_peak_rate, short[] x, int[] peakx) {
 
@@ -619,24 +629,99 @@ public class VoiceSynthesizer {
 		return GetConnect(x1, y1);
 	}
 	
+	/**
+	 * Create a window to process the samples, in order to provide a emotion
+	 * effects to the voice.
+	 * @param start amplifier for the samples from the beginning to the first acme.
+	 * @param duration amplifier for the samples in the middle of the voice.
+	 * @param end amplifier for the samples in the tail of the voice.
+	 * @param x the total samples.
+	 * @param peakx the indexes of the peaks in the samples.
+	 * @return the windowed samples, should have emotion effects.
+	 */
 	public double[] GetEmotionWin(double start, double duration, 
 			double end, short[] x, int[] peakx) {
-		// TODO Implement GetEmotionWin
 		
-		return null;
+		int pi = GetPeakIndex(x, peakx);
+		/** 
+		 * Adjust the half-length of the window in order to fit into the samples.
+		 * If you the acme resides in the first half of the samples sequence, no
+		 * adjustment is needed. However, if the acme resides in the second half
+		 * of the samples sequence, the length from acme to the end of the 
+		 * sequence will be assigned to pi so that array is not overflowed.
+		 * Additionally, this will advance the acme to match the general pattern
+		 * of human speech.
+		 * */
+		if(pi > (int)Math.floor(peakx.length/2.0D)) {
+			pi = peakx.length-1-pi;
+		}
+		double[] z = Numerics.OnesD(x.length);
+		double[] gwin =Numerics.GaussWin(2*peakx[pi]);
+		Numerics.Multiply(gwin, start-1);
+		
+		// Generate window for the first half of the sequence.
+		for(int i=0; i<gwin.length; ++i) {
+			z[i] += gwin[i];
+		}
+		
+		int nd = (int)Math.floor((peakx.length-pi)*2.0D/3.0D);
+		int pi2 = nd + pi;
+		int count = 0;
+		double[] gwin2 = Numerics.GaussWin((peakx[pi2] - peakx[pi]));
+		Numerics.Multiply(gwin2, (duration - 1.0D));
+		// Generate window for the middle half of the sequence.
+		for(int i=peakx[pi]+1; i<=peakx[pi2]; ++i) {
+			z[i] += gwin2[count];
+			++count;
+		}
+		
+		count = 0;
+		double[] gwin3 = Numerics.GaussWin(x.length - peakx[pi2]);
+		Numerics.Multiply(gwin3, (end - 1.0D));
+		// Generate window for the last half of the sequence.
+		for(int i=peakx[pi2]+1; i<x.length; ++i) {
+			z[i] += gwin2[count];
+			++count;
+		}
+		return z;
 	}
 	
+	/**
+	 * Apply EmotionWin to the samples.
+	 * @param win the emotion window.
+	 * @param x the samples.
+	 * @return the unsupressed samples that have been windowed.
+	 */
 	public long[] GetEmotionAdd(double[] win, short[] x) {
-		// TODO Implement GetEmotionAdd
-		return null;
+		long[] z = new long[win.length];
+		for(int i=0; i<z.length; ++i)
+			z[i] = (int)Math.floor(win[i]*x[i]);
+		
+		return z;
 	}
 	
+	/**
+	 * Apply EmotionWin to the samples, supressing any value above the
+	 * MAX_VALUE of the sample.
+	 * @param win the emotion window.
+	 * @param x the samples.
+	 * @return the final windowed samples.
+	 */
 	public short[] GetEmotionAddSupress(double[] win, short[] x) {
 		
 		long[] res = GetEmotionAdd(win, x);
 		return Numerics.SupressS(res);
 	}
 	
+	/**
+	 * Add emotion effects to the voice samples.
+	 * @param start the factor to amplify the fisrt portion of the voice.
+	 * @param duration the factor to amplify the middle portion of the voice.
+	 * @param end the factor to amplify the last portion of the voice.
+	 * @param x the samples.
+	 * @param peakx the indexes of the peaks in the samples.
+	 * @return the final emotional voice samples.
+	 */
 	public short[] GetEmotion(double start, double duration, 
 			double end, short[] x, int[] peakx) {
 		

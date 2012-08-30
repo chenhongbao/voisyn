@@ -337,4 +337,48 @@ public class Numerics {
 		}
 		return res;
 	}
+
+	/**
+	 * Get an array filed with one.
+	 * @param length the length of the array.
+	 * @return the reference to the array.
+	 */
+	public static int[] OnesL(int length) {
+		int[] res = new int[length];
+		for(int i=0; i<length; ++i)
+			res[i] = 1;
+		return res;
+	}
+	
+	public static double[] OnesD(int length) {
+		double[] res = new double[length];
+		for(int i=0; i<length; ++i)
+			res[i] = 1.0D;
+		return res;
+	}
+
+	/**
+	 * Get a gaussian window of i points, with alpha as default (2.5).
+	 * @param i the number of points returned.
+	 * @return an array contained the discrete points of an continuous 
+	 * gaussian window.
+	 */
+	public static double[] GaussWin(int i) {
+		return GaussWin(i, 2.5);
+	}
+	
+	/**
+	 * Multiply each elements with a factor alpha.
+	 * @param x the samples.
+	 * @param alpha the factor.
+	 */
+	public static void Multiply(double[] x, double alpha) {
+		if(x == null)
+			return;
+		for(int i = 0; i<x.length; ++i)
+			x[i] *= alpha;
+	}
+
+
+	
 }
