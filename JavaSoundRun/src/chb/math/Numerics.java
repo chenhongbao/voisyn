@@ -2,6 +2,7 @@ package chb.math;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Hongbao Chen
@@ -242,12 +243,24 @@ public class Numerics {
 		
 		return list;
 	}
+	
+	public static List<Short> GetListFrom(short[] x) {
+		if(x == null)
+			return null;
+		
+		List<Short> list = new ArrayList<Short>();
+		for(short s: x)
+			list.add(s);
+		
+		return list;
+	}
+	
 	/**
 	 * Get array from the List.
 	 * @param x List.
 	 * @return Array.
 	 */
-	public static int[] GetArrayFrom(List<Integer> x) {
+	public static int[] GetArrayFromL(List<Integer> x) {
 		if(x==null)
 			return null;
 		
@@ -260,6 +273,25 @@ public class Numerics {
 		return res2;
 	}
 	
+	public static short[] GetArrayFromS(List<Short> x) {
+		if(x == null)
+			return null;
+		
+		Object[] res = x.toArray();
+		short[] res2 = new short[res.length];
+		
+		for(int i=0; i<res2.length; ++i)
+			res2[i] = (Short)res[i];
+		
+		return res2;
+	}
+	
+	/**
+	 * Return the number of the samples whose values are equal to y.
+	 * @param x samples.
+	 * @param y value.
+	 * @return the number of samples with the value of y.
+	 */
 	public static int GetSameCount(List<Integer> x, int y) {
 		if(x == null)
 			return 0;
@@ -271,5 +303,38 @@ public class Numerics {
 		}
 		
 		return count;
+	}
+	
+	/**
+	 * Pick out an element randomly from the sample x.
+	 * @param x the samples.
+	 * @return the randomly picked-out element.
+	 */
+	public static short PickRandom(short[] x) {
+		Random rd = new Random();
+		int t = rd.nextInt(Integer.MAX_VALUE);
+		return x[t%x.length];
+	}
+	
+	/**
+	 * Supress all the samples with value above Short.MAX_VALUE or below
+	 * Short.MIN_VALUE.
+	 * @param x the samples.
+	 * @return the supressed samples.
+	 */
+	public static short[] SupressS(long[] x) {
+		if(x == null)
+			return null;
+		
+		short[] res = new short[x.length];
+		for(int i=0; i<x.length; ++i) {
+			if(x[i] > Short.MAX_VALUE)
+				res[i] = Short.MAX_VALUE;
+			else if(x[i] < Short.MIN_VALUE)
+				res[i] = Short.MIN_VALUE;
+			else
+				res[i] = (short)x[i];
+		}
+		return res;
 	}
 }

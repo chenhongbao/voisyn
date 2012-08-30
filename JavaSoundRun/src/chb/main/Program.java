@@ -79,6 +79,12 @@ public class Program {
 		}
 		
 		System.out.print("\n");
+		
+		for(int i =0; i<10; ++i) {
+			Random rd = new Random();
+			int t = rd.nextInt(Integer.MAX_VALUE);
+			System.out.println(t);
+		}
 	}
 	
 	static void testNumerics() {
