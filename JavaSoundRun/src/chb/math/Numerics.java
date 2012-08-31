@@ -86,7 +86,7 @@ public class Numerics {
 	public static double AverageN(short[] x, int i, int n) {
 		long avr = 0L;
 		int count = 0;
-		for(int k = i-n; k <= +n; ++k) {
+		for(int k = i-n; k <= i+n; ++k) {
 			if(k>=0 && k<x.length) {
 				avr += x[k];
 				++count;
@@ -99,7 +99,7 @@ public class Numerics {
 	public static double AverageN(double[] x, int i, int n) {
 		double avr = 0.0D;
 		int count = 0;
-		for(int k = i-n; k <= +n; ++k) {
+		for(int k = i-n; k <= i+n; ++k) {
 			if(k>=0 && k<x.length) {
 				avr += x[k];
 				++count;
@@ -185,7 +185,7 @@ public class Numerics {
 		short[] res = new short[end-start+1];
 		int count = 0;
 		for(int i=start; i<= end; ++i) {
-			res[count] =  res[i];
+			res[count] =  x[i];
 			++count;
 		}
 		
@@ -378,7 +378,23 @@ public class Numerics {
 		for(int i = 0; i<x.length; ++i)
 			x[i] *= alpha;
 	}
-
+	
+	/**
+	 * Convert short array to double array.
+	 * @param x the short array.
+	 * @return the converted double array.
+	 */
+	public static double[] Short2Double(short[] x) {
+		if(x == null)
+			return null;
+		
+		double[] res = new double[x.length];
+		for(int i=0; i< res.length; ++i)
+			res[i] = (double)x[i];
+		
+		return res;
+	}
+	
 
 	
 }

@@ -51,7 +51,7 @@ public class VoiceSynthesizer {
 		short[] res = new short[endi - start + 1];
 		int count = 0;
 
-		for (int i = start; i <= start + endi; ++i) {
+		for (int i = start; i <= endi; ++i) {
 			res[count] = Numerics.MultiplySupress(x[i], H[count]);
 			++count;
 		}
@@ -116,6 +116,9 @@ public class VoiceSynthesizer {
 		short[] res = new short[count];
 		int index = 0;
 		for (int i = 0; i < samples.length; ++i) {
+			if(samples[i] == null)
+				continue;
+			
 			for (int j = 0; j < samples[i].length; ++j) {
 				res[index] = samples[i][j];
 				++index;
@@ -143,12 +146,14 @@ public class VoiceSynthesizer {
 		 */
 		double[] v = new double[y.length];
 		for (int i = 0; i < y.length; ++i) {
-			v[i] = Numerics.AverageN(y, i, AVERAGE_WINDOW_HALF);
+			double tmp = Numerics.AverageN(y, i, AVERAGE_WINDOW_HALF);
+			v[i] = tmp;
 		}
 
 		double[] w = new double[v.length];
 		for (int i = 0; i < v.length; ++i) {
-			w[i] = Numerics.AverageN(v, i, AVERAGE_WINDOW_HALF);
+			double tmp = Numerics.AverageN(v, i, AVERAGE_WINDOW_HALF);
+			w[i] = tmp;
 		}
 
 		double[] z = Numerics.ZerosD(y.length);
@@ -177,7 +182,7 @@ public class VoiceSynthesizer {
 			int i = 2;
 			while (i <= px.size() - 1) {
 
-				short[] tmp = Numerics.Pick(y, px.get(i - 2), px.get(i));
+				short[] tmp = Numerics.Pick(y, px.get(i - 2)+1, px.get(i));
 				Object[] max_idx = Numerics.Max(tmp);
 				int L = (Integer) max_idx[1];
 
@@ -198,10 +203,10 @@ public class VoiceSynthesizer {
 		/*
 		 * Change peakx from List to Array.
 		 */
-		Integer[] ints = (Integer[]) peakx.toArray();
+		Object[] ints =  peakx.toArray();
 		int[] res = new int[ints.length];
 		for (int i = 0; i < ints.length; ++i)
-			res[i] = (int) ints[i];
+			res[i] = (Integer) ints[i];
 
 		return res;
 
@@ -282,7 +287,7 @@ public class VoiceSynthesizer {
 
 			while (bp_not_idx.size() > bp_not_num) {
 				// Generate persudo number ranging from 0 to MAX_VALUE.
-				int i = rds.nextInt(Integer.MAX_VALUE) % pi;
+				int i = rds.nextInt(Integer.MAX_VALUE) % bp_not_idx.size();
 				bp_not_idx.remove(i);
 			}
 
@@ -314,7 +319,7 @@ public class VoiceSynthesizer {
 					peakx.length - 1);
 			while (ap_not_idx.size() > ap_not_num) {
 				int index = rds.nextInt(Integer.MAX_VALUE)
-						% (peakx.length - 1 - pi);
+						% (ap_not_idx.size() - 1);
 				ap_not_idx.remove(index);
 			}
 
@@ -399,7 +404,7 @@ public class VoiceSynthesizer {
 		Arrays.sort(peakx);
 		int pi = GetPeakIndex(x, peakx);
 		Object[] res = Numerics.Max(x);
-		int Y = (int) res[0];
+		short Y = (Short) res[0];
 		int z = 0;
 
 		double Y_m = Y * ratio;
@@ -436,7 +441,7 @@ public class VoiceSynthesizer {
 		Arrays.sort(peakx);
 		int pi = GetPeakIndex(x, peakx);
 		Object[] res = Numerics.Max(x);
-		int Y = (Integer) res[0];
+		short Y = (Short) res[0];
 		int z = 0;
 
 		double Y_m = Y * ratio;
@@ -606,7 +611,7 @@ public class VoiceSynthesizer {
 			short[] y, int[] peaky, double ratio) {
 		
 		Object[] res = Numerics.Max(x);
-		short M = (Short)res[0];
+		short M = (short)Math.floor((Short)res[0] *ratio);
 		
 		int pi = 0;
 		for(int i=peakx.length -1; i>=0; --i) {
@@ -617,7 +622,7 @@ public class VoiceSynthesizer {
 		}
 		
 		int pi2 = 0;
-		for(int i=0; i<y.length; ++i) {
+		for(int i=0; i<peaky.length; ++i) {
 			if(y[peaky[i]] > M) {
 				pi2 = i;
 				break;
@@ -774,15 +779,16 @@ public class VoiceSynthesizer {
 		int pi = GetPeakIndex(x, peakx);
 		int start = GetDownSlope(x, peakx, TRIM_PORTION);
 		
-		int idx1 = peakx[start];
-		int idx2 = peakx[(int)Math.floor((1-pos1) * (peakx.length-1))];
+		int idx1 = peakx[start+(int)((peakx.length-1-start) *pos1)];
+		int idx2 = x.length-1;
 		short[] z1 = Numerics.Pick(x, idx1, idx2);
 		
 		idx1 = 1;
 		idx2 = peakx[(int)Math.floor(start - (start-pi) * pos2)];
 		short[] z2 = Numerics.Pick(x, idx1, idx2);
 		
-		return GetConnect(z1, z2);
+		// Here z2 should be before z1.
+		return GetConnect(z2, z1);
 	}
 
 }

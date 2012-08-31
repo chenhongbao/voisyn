@@ -35,7 +35,7 @@ public class Wave {
 	public ByteArrayOutputStream ByteArrayOut = null;
 	public AudioFormat Format = null;
 	public boolean StopRecording = false;
-	public int BufferSize = 0;
+	public int BufferSize = 1024;
 
 	public static AudioFileFormat.Type DefaultFileType = AudioFileFormat.Type.WAVE;
 	public static AudioFormat.Encoding DefaultEncoding = AudioFormat.Encoding.PCM_SIGNED;

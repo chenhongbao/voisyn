@@ -54,32 +54,63 @@ public class Program {
 		//testJDBC();
 		//testText();
 		//testSegment();
-		//testPlot();
+		testPlot();
 		//testPlot2();
 		//AsciiChineseNumber.test();
 		//testNumerics();
-		testSynth();
+		try {
+			testSynth();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 	
-	static void testSynth() {
+	static void testSynth() throws Exception {
+		Wave  wave = Wave.CreateWave(Wave.DefaultFormat);
+		wave.ReadFrom("wav/wo_01.wav");
+		short[] data = wave.Get16Bits();
+		
 		VoiceSynthesizer vs = new VoiceSynthesizer();
-		int[] x = new int[]{0, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22};
-		int[] y = new int[]{3,4,8,9,1,4,5,1,1,3, 10, 11, 14,17,12,1,1,3,19,22};
-		int[] z =vs.GetMix(x, y);
-		
-		for(int i: z) {
-			System.out.print(i);
-			System.out.print(" ");
+		int[] peakx = vs.GetPeak(data);
+		List<short[]> segs = vs.GetSeg(data, peakx);
+		short[]  z =null;
+		for(short[] s : segs) {
+			//CData cdata = new CData(null, s, null);
+			//CPlot.Plot(cdata, true);
+			z = vs.GetConnect(z, s);
 		}
 		
-		System.out.print("\n");
+		CData cdata = new CData(null, z, null);
+		CPlot.Plot(cdata, true);
 		
-		for(int i =0; i<10; ++i) {
-			Random rd = new Random();
-			int t = rd.nextInt(Integer.MAX_VALUE);
-			System.out.println(t);
-		}
+		short[] data1 = vs.GetNarrow(1.0D, 0.5D, 0.5D, data, vs.GetPeak(data));
+		
+		cdata.setY(data);
+		CPlot plot = CPlot.Plot("origin",CPlot.EAST, cdata, false);
+		cdata.setY(data1);
+		CPlot.Plot(plot,"narrow", cdata, true);
+		
+		short[] data2 = vs.GetEmotion(2.0, 1.5, 0.5, data, vs.GetPeak(data));
+		cdata.setY(data2);
+		CPlot.Plot("emotion", CPlot.EAST, cdata, true);
+		
+		wave.ReadFrom("wav/shi_01.wav");
+		data = wave.Get16Bits();
+		cdata.setY(data);
+		CPlot.Plot("shi", CPlot.EAST, cdata, true);
+		
+		short[] data3 = vs.GetFusion(data2, vs.GetPeak(data2), data, vs.GetPeak(data), 0.2);
+		cdata.setY(data3);
+		CPlot.Plot("fusion", CPlot.EAST, cdata, true);
+		
+		short[] data4 = vs.TrimBefore(data, vs.GetPeak(data), 0.7, 0.3);
+		cdata.setY(data4);
+		CPlot.Plot("trimbefore-shi", CPlot.EAST, cdata, true);
+		
+		short[] data5 = vs.TrimAfter(data4, vs.GetPeak(data4), 0.5, 0.3);
+		cdata.setY(data5);
+		CPlot.Plot("trimafter-shi", CPlot.EAST, cdata, true);
 	}
 	
 	static void testNumerics() {
@@ -171,10 +202,10 @@ public class Program {
 				z[j][i] = x[j]*y[i];
 		
 		CData data = new CData(x, y, null);
-		CPlot plot = CPlot.Plot("Test Plot", CPlot.EAST, data, false);
+		CPlot plot = CPlot.Plot("Test Plot-0", CPlot.SOUTH, data, false);
 		
 		data = new CData(x, y, z);
-		CPlot.Plot("Test Plot", CPlot.EAST, data, true);
+		CPlot.Plot("Test Plot-1", CPlot.SOUTH, data, true);
 		
 		for(int i =0; i<y.length;++i) {
 			y[i] = -x[i]*x[i];
@@ -183,6 +214,11 @@ public class Program {
 		data = new CData(x, y, null);
 		CPlot.Plot(plot, "Test Plot-2", data, true);
 		
+		data.setX((short[])null);
+		data.setZ((short[][])null);
+		data.setY(new double[]{1.D, 4.0D, 8.0D, 16.0D, 46.0D, 78.0D});
+
+		CPlot.Plot("Test Plot X", CPlot.EAST,data, true);
 		
 	}
 	

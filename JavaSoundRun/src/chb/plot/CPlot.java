@@ -22,7 +22,7 @@ public class CPlot {
 	private PlotPanel Panel = null;
 	private CData  Data;
 	
-	public String Legend = "X-Y Plot";
+	public String ORIENTATION = CPlot.EAST;
 	public String PlotName = "Data Plot";
 	
 	public int XSize = 500;
@@ -37,12 +37,12 @@ public class CPlot {
 	/**
 	 * Plot the figure with the data provided.
 	 * @param name the name of the figure.
-	 * @param legend the legend of the figure.
+	 * @param orientation the legend of the figure.
 	 * @param data the data to plot.
 	 * @param visible if true, it will display the figure, vice versa.
 	 * @return the CPlot instance for the current plotting.
 	 */
-	public static CPlot Plot(String name, String legend, 
+	public static CPlot Plot(String name, String orientation, 
 			CData data, boolean visible) {
 		
 		if(data.Validate() == false)
@@ -52,7 +52,7 @@ public class CPlot {
 		plot.SetData(data);
 		
 		plot.PlotName = name;
-		plot.Legend = legend;
+		plot.ORIENTATION = orientation;
 		
 		plot.__Plot__(visible);
 		
@@ -84,7 +84,11 @@ public class CPlot {
 		}
 		else if(dimen == 2){
 			Plot2DPanel pn2d = (Plot2DPanel)panel;
-			pn2d.addLinePlot(name, data.getX(), data.getY());
+			if(plot.GetData().getX() != null) {
+				pn2d.addLinePlot(name, data.getX(), data.getY());
+			} else {
+				pn2d.addLinePlot(name, data.getY());
+			}
 		} else {
 			Plot3DPanel pn3d = (Plot3DPanel)panel;
 			pn3d.addGridPlot(name, data.getX(), data.getY(), data.getZ());
@@ -129,9 +133,13 @@ public class CPlot {
 			return;
 		} else if(Data.GetDimension() == 2) {
 			Plot2DPanel plot = new Plot2DPanel();
-			
-			plot.addLinePlot(this.PlotName, this.Data.getX(), this.Data.getY());
-			plot.addLegend(this.Legend);
+			// If X is null, we use the default 1:length(Y) as X vector.
+			if(this.Data.getX() == null) {
+				plot.addLinePlot(this.PlotName, this.Data.getY());
+			} else {
+				plot.addLinePlot(this.PlotName, this.Data.getX(), this.Data.getY());
+			}
+			plot.addLegend(this.ORIENTATION);
 			
 			if(visible == true) {
 				SetVisible(plot);
@@ -141,9 +149,9 @@ public class CPlot {
 			}
 			
 		} else {
-			Plot3DPanel plot = new Plot3DPanel(this.PlotName);
+			Plot3DPanel plot = new Plot3DPanel(this.ORIENTATION);
 			plot.addGridPlot(this.PlotName, this.Data.getX(), this.Data.getY(), this.Data.getZ());
-			plot.addLegend(this.Legend);
+			plot.addLegend(this.ORIENTATION);
 			
 			if(visible == true) {
 				SetVisible(plot);			

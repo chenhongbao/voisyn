@@ -5,22 +5,52 @@ package chb.plot;
 
 import java.util.Arrays;
 
+import chb.math.Numerics;
+
 /**
  * CData wraps the data, both the 2-D and 3-D.
  * @author Hongbao Chen
  *
  */
 public class CData {
-	/*
-	 * TODO Rewrite setter or getter to cut down the number of samples used to plot.
-	 * We must cut down the number of samples used to draw a figure
-	 *because jmathplot is really slow in processsing large dataset.
-	 *Probably, we can inspect the getter or setter to have this job completed. 
-	 */
+
 	private double[] X = null;
 	private double[] Y = null;
 	private double[][] Z = null;
 	
+	public CData(short[] _x, short[] _y, short[][] _z) {
+		this.setX(_x);
+		this.setY(_y);
+		this.setZ(_z);
+	}
+	
+	public void setZ(short[][] _z) {
+		if(_z == null) {
+			this.Z = null;
+			return;
+		}
+		if(_z[0] == null) {
+			this.Z = null;
+			return;
+		}
+		
+		double[][] tmp = new double[_z.length][_z[0].length];
+		for(int i = 0; i<_z.length; ++i)
+			for(int j = 0; j<_z[0].length; ++j)
+				tmp[i][j] = (double)_z[i][j];
+		
+		setZ(tmp);
+		
+	}
+
+	public void setX(short[] _x) {
+		setX(Numerics.Short2Double(_x));
+	}
+
+	public void setY(short[] _y) {
+		setY(Numerics.Short2Double(_y));
+	}
+
 	public CData(double[] _x, double[] _y, double[][] _z) {
 		this.setX(_x);
 		this.setY(_y);
@@ -269,8 +299,10 @@ public class CData {
 	 * @param x the x to set
 	 */
 	public void setX(double[] x) {
-		if(x == null)
+		if(x == null) {
+			this.X = null;
 			return;
+		}
 		
 		this.X = Arrays.copyOfRange(x, 0, x.length);
 	}
@@ -280,8 +312,10 @@ public class CData {
 	 * @param y the y to set
 	 */
 	public void setY(double[] y) {
-		if(y == null)
+		if(y == null) {
+			this.Y =null;
 			return;
+		}
 		
 		this.Y = Arrays.copyOfRange(y, 0, y.length);
 	}
@@ -291,8 +325,10 @@ public class CData {
 	 * @param z the z to set
 	 */
 	public void setZ(double[][] z) {
-		if(z == null)
+		if(z == null) {
+			this.Z = null;
 			return;
+		}
 		
 		this.Z = CData.DeepCopy2DArray(z);
 	}
@@ -303,11 +339,14 @@ public class CData {
 	 */
 	public boolean Validate() {
 		
-		if(this.X == null || this.Y == null)
+		if(this.Y == null)
 			return false;
 		
 		if(this.Z == null) {
-			return this.X.length ==  this.Y.length;
+			if(this.X != null)
+				return this.X.length ==  this.Y.length;
+			
+			return true;
 		} else {
 			if(Z[0] == null)
 				return false;
