@@ -11,7 +11,12 @@ import java.util.Arrays;
  *
  */
 public class CData {
-
+	/*
+	 * TODO Rewrite setter or getter to cut down the number of samples used to plot.
+	 * We must cut down the number of samples used to draw a figure
+	 *because jmathplot is really slow in processsing large dataset.
+	 *Probably, we can inspect the getter or setter to have this job completed. 
+	 */
 	private double[] X = null;
 	private double[] Y = null;
 	private double[][] Z = null;

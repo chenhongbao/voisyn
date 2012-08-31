@@ -18,12 +18,6 @@ public class CWPoint {
         this.State = false;
     }
 
-    //TODO: Implement Froze
-    public void Froze(String content)
-    {
-        
-    }
-
     public void AddSegment(CWSegment seg)
     {
         if (seg == null)

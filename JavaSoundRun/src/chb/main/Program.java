@@ -53,12 +53,7 @@ public class Program {
 		//testUnicode();
 		//testJDBC();
 		//testText();
-//		try {
-//			testSegment();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		
+		//testSegment();
 		//testPlot();
 		//testPlot2();
 		//AsciiChineseNumber.test();

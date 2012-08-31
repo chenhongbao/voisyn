@@ -20,6 +20,7 @@ public class VoiceSynthesizer {
 	public int AVERAGE_WINDOW_HALF = 100;
 	public int DUPLICATE_WINDOW = 2;
 	public double INTERVAL_RATIO = 0.95D;
+	public double TRIM_PORTION = 0.05D;
 
 	/**
 	 * Take one frame out of the samples x, from index start to index end. This
@@ -727,6 +728,61 @@ public class VoiceSynthesizer {
 		
 		double[] W = GetEmotionWin(start, duration, end, x, peakx);
 		return GetEmotionAddSupress(W, x);
+	}
+	
+	/**
+	 * Trim the voice according to the vocal and nasal part. It only trimes the 
+	 * samples before the climax of all the samples.
+	 * @param x the samples.
+	 * @param peakx the indexes of peaks in x.
+	 * @param pos1 the position between which and the up slope point
+	 * the samples should be eliminated. 
+	 * @param pos2 the position between up slope point and which 
+	 * the samples should be eliminated. 
+	 * @return the trimed samples.
+	 */
+	public short[] TrimBefore(short[] x, int[] peakx, double pos1, double pos2) {
+		int pi = GetPeakIndex(x, peakx);
+		int start = GetUpSlope(x, peakx, TRIM_PORTION);
+		
+		int idx1 = peakx[(int)Math.ceil(start * pos1)];
+		int idx2 = peakx[start];
+		
+		short[] z1 = Numerics.Pick(x, idx1, idx2);
+		
+		idx1 = peakx[start + (int)Math.ceil((pi-start) * pos2)];
+		idx2 = x.length-1;
+		
+		short[] z2 = Numerics.Pick(x, idx1, idx2);
+		
+		return GetConnect(z1, z2);
+	}
+	
+	/**
+	 * Trim the voice according to the vocal and nasal part. It only trimes the 
+	 * samples after the climax of all the samples.
+	 * @param x the samples.
+	 * @param peakx the indexes of peaks in x.
+	 * @param pos1 the position between which and the up slope point
+	 * the samples should be eliminated. 
+	 * @param pos2 the position between up slope point and which 
+	 * the samples should be eliminated. 
+	 * @return the trimed samples.
+	 */
+	public short[] TrimAfter(short[] x, int[] peakx, double pos1, double pos2) {
+		
+		int pi = GetPeakIndex(x, peakx);
+		int start = GetDownSlope(x, peakx, TRIM_PORTION);
+		
+		int idx1 = peakx[start];
+		int idx2 = peakx[(int)Math.floor((1-pos1) * (peakx.length-1))];
+		short[] z1 = Numerics.Pick(x, idx1, idx2);
+		
+		idx1 = 1;
+		idx2 = peakx[(int)Math.floor(start - (start-pi) * pos2)];
+		short[] z2 = Numerics.Pick(x, idx1, idx2);
+		
+		return GetConnect(z1, z2);
 	}
 
 }
