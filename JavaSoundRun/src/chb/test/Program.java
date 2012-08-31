@@ -1,7 +1,7 @@
 /**
  * 
  */
-package chb.main;
+package chb.test;
 
 import java.io.File;
 import java.io.FileInputStream;
