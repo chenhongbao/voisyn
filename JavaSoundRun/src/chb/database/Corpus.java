@@ -1,11 +1,5 @@
 package chb.database;
 
-import java.sql.CallableStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-
-import chb.Utility;
-
 
 /**
  * Corpus provides interfaces to access the corpus, especially for word 
@@ -27,9 +21,6 @@ public class Corpus {
 	public static boolean IsPhraseWithConn(String s,
 			DataSource conn) {
 
-        if (conn == null || conn.ConnectionString.length() == 0)
-        	return false;
-        
         /** 
          * Example : <br>
          *     prepareCall("{call demoSp(?, ?)}") <br>
@@ -39,17 +30,7 @@ public class Corpus {
          *         out exist int)<br>
          */
         int out = 0;
-		try {
-			CallableStatement prestate = conn.Connection.prepareCall("{call IsPhrase(?, ?)}");
-			prestate.setString(1, s);
-			prestate.registerOutParameter(2, Types.INTEGER);
-			
-			prestate.execute();
-			out = prestate.getInt(2);
-		} catch (SQLException e) {
-			Utility.Log(e.getMessage());
-			return false;
-		}
+        // TODO Implement IsPhraseWithConn
         
 		return out == 1;
 	}
@@ -64,22 +45,9 @@ public class Corpus {
 	 */
 	public static boolean IsAuxWithConn(String s,
 			DataSource conn) {
-
-        if (conn == null || conn.ConnectionString.length() == 0)
-        	return false;
         
         int out = 0;
-		try {
-			CallableStatement prestate = conn.Connection.prepareCall("{call IsAux(?, ?)}");
-			prestate.setString(1, s);
-			prestate.registerOutParameter(2, Types.INTEGER);
-			
-			prestate.execute();
-			out = prestate.getInt(2);
-		} catch (SQLException e) {
-			Utility.Log(e.getMessage());
-			return false;
-		}
+        // TODO Implement IsAuxWithConn
         
 		return out == 1;
 

@@ -3,7 +3,24 @@
  */
 package chb.database;
 
+import java.io.IOException;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * @author Administrator
@@ -13,14 +30,33 @@ public class DataSource {
 
 	public Integer State;
 
-	public Connection Connection;
-
 	public String ConnectionString;
 	public String DbAddress;
 	public String DataBase;
 	public String User;
 	public String Password;
 	public String Encoding;
+	
+	private Document XmlDoc = null;
+	private XPath XPath = null;
+
+	public static String initdoc = "user_info.xml";
+	
+	private Map<String, Table> Tables = null;
+
+	private boolean ReOpened = false;
+
+	/**
+	 * Get table by name.
+	 * @param name the table name.
+	 * @return the Table instance.
+	 */
+	public Table getTable(String name) {
+		if(name == null || name.length() == 0)
+			return null;
+		
+		return this.Tables.get(name);
+	}
 
 	public static class ConnectionState {
 
@@ -32,6 +68,15 @@ public class DataSource {
 	public DataSource() {
 	}
 
+	/**
+	 * Factory method to get a new instance of DataSource.
+	 * @param _addr the database address (relative path to the root of application).
+	 * @param _db the name of the database.
+	 * @param _user the user name of the current user.
+	 * @param _passwd the password of the user.
+	 * @param _encoding the encoding of the files.
+	 * @return a newly instantiated DataSource object.
+	 */
 	public DataSource CreateConnection(String _addr, String _db,
 			String _user, String _passwd, String _encoding) {
 
@@ -41,45 +86,129 @@ public class DataSource {
 		conn.User = _user;
 		conn.Password = _passwd;
 		conn.Encoding = _encoding;
+		this.Tables = new HashMap<String, Table>();
 
 		return conn;
 
 	}
 
-	public void Open() throws SQLException {
-		if (this.Connection != null) {
-			if (this.Connection.isValid(500) == true)
-				return;
+	public void Open() {
+		// If the database has been opened, but closed later, just change its state 
+		// and leave it.
+		if(this.ReOpened) {
+			this.State = DataSource.ConnectionState.Opened;
+			return;
+		}
+
+		//Read the user_info.xml, and decide whether user exists in the XML file.
+		//Read in all the databases related to that user, and the tables in the 
+		//databases.
+		if(IsUserValid(this.User, this.Password, this.DataBase) == false)
+			return;
+		String path = "/datasource/databases/database[@name='"
+			+this.DataBase+"']/@address";
+		NodeList list = (NodeList)ExecXpath(path,  XPathConstants.NODESET);
+		if(list.getLength() != 0)
+			return;
+		
+		this.DbAddress = list.item(0).getNodeValue();
+		if(this.DbAddress.endsWith("/") == false)
+			this.DbAddress += "/";
+		
+		path = "/datasource/databases/database[@name='"
+				+this.DataBase+"']/table";
+		
+		list = (NodeList)ExecXpath(path,  XPathConstants.NODESET);
+		for(int i =0; i<list.getLength(); ++i) {
+			Element elem = (Element) list.item(i);
+			String tablename = elem.getAttribute("name");
+			String tablelocaltion = elem.getAttribute("location");
+			String tablepath = this.DbAddress+tablelocaltion;
+			
+			Table table = new DataTable(tablename, tablepath, this.Encoding);
+			this.Tables.put(tablename, table);
 		}
 		
-		if (this.ConnectionString == null
-				|| this.ConnectionString.length() == 0) {
-
-			this.ConnectionString = this.BuildConnectionString(this.DbAddress,
-					this.DataBase, this.User, this.Password, this.Encoding);
+		for(String s: this.Tables.keySet()) {
+			Table t = this.Tables.get(s);
+			t.SetUp();
 		}
-
-		this.Connection = DriverManager.getConnection(this.ConnectionString);
+		
 		this.State = DataSource.ConnectionState.Opened;
 
 	}
 
 	public void Close() throws SQLException {
-		if (this.Connection.isClosed() == false)
-			this.Connection.close();
-
+		//Clear all the resources related to that user.
+		this.ReOpened = true;
 		this.State = DataSource.ConnectionState.Closed;
 
 	}
+	
+	/**
+	 * Test whether the user is a valid user.
+	 * @param user the user name.
+	 * @param passwd user's password.
+	 * @param db the database name.
+	 * @return true if the user is valid and false if he is not.
+	 */
+	public boolean IsUserValid(String user, String passwd, String db)  {
+		try {
+			SetUpContext();
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		String path = "/datasource/users/user[@name='"
+				+user+"' and @password='"
+				+passwd+"']/db[@name='"
+				+db+"']";
+		
+		Object res = ExecXpath(path,  XPathConstants.NODESET);
+		NodeList nodes = (NodeList )res;
+		if(nodes.getLength() == 0)
+			return false;
+		else 
+			return true;
 
-	private String BuildConnectionString(String _addr, String _db,
-			String _user, String _passwd, String _encoding) {
+	}
+	
+	/**
+	 * Set up the XML Document and the XPath objects.
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private void SetUpContext() 
+			throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true); 
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        this.XmlDoc = builder.parse(DataSource.initdoc);
+        
 
-		String conn = "jdbc:mysql://" + this.DbAddress + "/" + this.DataBase
-				+ "?" + "user=" + this.User + "&password=" + this.Password
-				+ "&characterEncoding=" + this.Encoding;
-
-		return conn;
+        XPathFactory xpathfactory = XPathFactory.newInstance();
+        this.XPath = xpathfactory.newXPath();
+	} 
+	
+	/**
+	 * Execute XPath expression with the Document and XPath provided.
+	 * @param path the xpath expression.
+	 * @return the object that represent the returned result.
+	 */
+	private Object ExecXpath(String path, QName type) {
+		if(path == null || path.length() == 0)
+			return null;
+		
+		if(this.XPath == null || this.XmlDoc == null)
+			return null;
+		
+		try {
+			return this.XPath.evaluate(path, this.XmlDoc, type);
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
