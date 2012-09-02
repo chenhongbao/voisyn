@@ -21,18 +21,12 @@ public class Corpus {
 	public static boolean IsPhraseWithConn(String s,
 			DataSource conn) {
 
-        /** 
-         * Example : <br>
-         *     prepareCall("{call demoSp(?, ?)}") <br>
-         * Procedure:<br>
-         *     create procedure IsPhrase( <br>
-         *         in phrase varchar(20) CHARACTER SET utf8 COLLATE utf8_bin, <br>
-         *         out exist int)<br>
-         */
-        int out = 0;
-        // TODO Implement IsPhraseWithConn
+        Table word = conn.getTable("WORD_LIST_LEVEL_0");
+        Table idiom = conn.getTable("IDIOM_LIST_LEVEL_0");
+        Table proverbe = conn.getTable("PROVERBE_LIST_LEVEL_0");
         
-		return out == 1;
+        return word.Exists(s) || idiom.Exists(s) || proverbe.Exists(s);
+        
 	}
 	
 	/**
@@ -46,10 +40,9 @@ public class Corpus {
 	public static boolean IsAuxWithConn(String s,
 			DataSource conn) {
         
-        int out = 0;
-        // TODO Implement IsAuxWithConn
-        
-		return out == 1;
+
+		Table charac = conn.getTable("CHARACTER_LIST_LEVEL_5");
+		return charac.Exists(s);
 
 	}
 

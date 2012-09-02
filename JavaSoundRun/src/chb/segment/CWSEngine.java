@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import chb.database.DataSource;
+
 /**
  * @author Administrator
  * 
@@ -16,9 +18,9 @@ public class CWSEngine {
 
 	public List<CWPoint> Points;
 	public CWText Text;
-	public String ConnectionString;
 	public List<CWWord> Words;
 	public List<CWWord> Merges;
+	public DataSource DataSrc = null; 
 
 	private Boolean isSegmented = false;
 	private boolean isMerged;
@@ -31,14 +33,13 @@ public class CWSEngine {
 		this.Text = new CWText();
 		this.Points = new LinkedList<CWPoint>();
 		this.Words = new LinkedList<CWWord>();
-		this.ConnectionString = "";
+
 	}
 
 	public CWSEngine(String text) throws Exception {
 		this.Text = new CWText(text);
 		this.Points = new LinkedList<CWPoint>();
 		this.Words = new LinkedList<CWWord>();
-		this.ConnectionString = "";
 	}
 
 	public void SetText(String text) throws Exception {
@@ -57,7 +58,7 @@ public class CWSEngine {
 		CWWindow win = new CWWindow();
 		win.Text = this.Text;
 		win.Size = size;
-		win.ConnectionString = this.ConnectionString;
+		win.DataSrc = this.DataSrc;
 		win.SetDb();
 
 		while (win.HasNext()) {

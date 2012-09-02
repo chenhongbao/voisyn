@@ -7,8 +7,8 @@
 	</users>
 	<databases>
 		<database name="wordbase" address="data/wordbase" >
-			<table name="CHARACTER_LIST_LEVEL_0" localtion="CHARACTER_LIST_LEVEL_0.dbx" />
-			<table name="CHARACTER_LIST_LEVEL_5" localtion="CHARACTER_LIST_LEVEL_5.dbx" />
+			<table name="CHARACTER_LIST_LEVEL_0" location="CHARACTER_LIST_LEVEL_0.dbx" />
+			<table name="CHARACTER_LIST_LEVEL_5" location="CHARACTER_LIST_LEVEL_5.dbx" />
 			<table name="WORD_LIST_LEVEL_0" location="WORD_LIST_LEVEL_0.dbx" />
 			<table name="WORD_LIST_LEVEL_1" location="WORD_LIST_LEVEL_1.dbx" />
 			<table name="IDIOM_LIST_LEVEL_0" location="IDIOM_LIST_LEVEL_0.dbx" />

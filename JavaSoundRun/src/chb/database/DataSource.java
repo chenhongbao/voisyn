@@ -66,6 +66,7 @@ public class DataSource {
 	}
 
 	public DataSource() {
+		this.Tables = new HashMap<String, Table>();
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class DataSource {
 	 * @param _encoding the encoding of the files.
 	 * @return a newly instantiated DataSource object.
 	 */
-	public DataSource CreateConnection(String _addr, String _db,
+	public static DataSource CreateConnection(String _addr, String _db,
 			String _user, String _passwd, String _encoding) {
 
 		DataSource conn = new DataSource();
@@ -86,7 +87,7 @@ public class DataSource {
 		conn.User = _user;
 		conn.Password = _passwd;
 		conn.Encoding = _encoding;
-		this.Tables = new HashMap<String, Table>();
+		conn.Tables = new HashMap<String, Table>();
 
 		return conn;
 
@@ -108,7 +109,7 @@ public class DataSource {
 		String path = "/datasource/databases/database[@name='"
 			+this.DataBase+"']/@address";
 		NodeList list = (NodeList)ExecXpath(path,  XPathConstants.NODESET);
-		if(list.getLength() != 0)
+		if(list.getLength() != 1)
 			return;
 		
 		this.DbAddress = list.item(0).getNodeValue();
@@ -122,10 +123,10 @@ public class DataSource {
 		for(int i =0; i<list.getLength(); ++i) {
 			Element elem = (Element) list.item(i);
 			String tablename = elem.getAttribute("name");
-			String tablelocaltion = elem.getAttribute("location");
-			String tablepath = this.DbAddress+tablelocaltion;
+			String tablelocation = elem.getAttribute("location");
+			String tablepath = this.DbAddress+tablelocation;
 			
-			Table table = new DataTable(tablename, tablepath, this.Encoding);
+			Table table = new DataTable(tablename, tablepath,  this.Encoding);
 			this.Tables.put(tablename, table);
 		}
 		

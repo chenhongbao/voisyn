@@ -14,16 +14,15 @@ import chb.database.DataSource;
  */
 public class CWWindow {
 	
-    public int Size;
+    public int Size = 4;
     public CWText Text;
-    public String ConnectionString;
-    private DataSource DataSrc;
+    public DataSource DataSrc = null;
 
-    public CWWindow()
+    public CWWindow(){}
+    public CWWindow(DataSource ds)
     {
-        this.Size = 0;
-        this.ConnectionString = "";
-        this.DataSrc = new DataSource();
+        this.Size = 4;
+        this.DataSrc = ds;
     }
 
     public void SetDbConnection(String connstr) throws SQLException
@@ -32,20 +31,10 @@ public class CWWindow {
             return;
         if (connstr.length() == 0)
         	return;
-        
-        this.ConnectionString = connstr;
-        this.DataSrc.ConnectionString = this.ConnectionString;
-
         this.DataSrc.Open();
     }
     public void SetDb() throws Exception
-    {
-        if (this.ConnectionString == null)
-            throw new Exception("Connection string cannot be null.");
-        if (this.ConnectionString.length() == 0)
-            throw new Exception("Connection string length can not be zeor.");
-        
-        this.DataSrc.ConnectionString = this.ConnectionString;
+    {   
         this.DataSrc.Open();
 
     }

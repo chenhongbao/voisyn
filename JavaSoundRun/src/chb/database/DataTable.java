@@ -27,6 +27,9 @@ public class DataTable implements Table {
 	public String Encoding = "";
 	
 	private List<String> Columns = null; 
+	public List<String> getColumns() {
+		return Columns;
+	}
 	private Map<String, Row> Rows = null;
 
 	public DataTable() {}
@@ -82,11 +85,10 @@ public class DataTable implements Table {
 					new FileInputStream(file), this.Encoding);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return;
-		} finally {
-			if(intext != null)
+			if(intext!=null)
 				intext.close();
-		}
+			return;
+		} 
         
         String tmp = null;
         do {
@@ -95,7 +97,7 @@ public class DataTable implements Table {
         	if(fields.length == 0)
         		continue;
         	
-        	if(this.Rows.size()==0) {
+        	if(this.Columns.size()==0) {
         		for(int i =0; i<fields.length; ++i)
         			this.Columns.add(fields[i]);
         	} else {
@@ -114,6 +116,9 @@ public class DataTable implements Table {
         	}
         	
         } while(intext.hasNextLine());
+        
+        if(intext!=null)
+        	intext.close();
         
 	}
 

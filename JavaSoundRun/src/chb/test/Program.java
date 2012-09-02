@@ -53,17 +53,37 @@ public class Program {
 		//testUnicode();
 		//testJDBC();
 		//testText();
-		//testSegment();
-		testPlot();
+		try {
+			testSegment();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		//testPlot();
 		//testPlot2();
 		//AsciiChineseNumber.test();
 		//testNumerics();
-		try {
-			testSynth();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		//testSynth();
+		//testCorpus();
 
+
+	}
+	
+	static void testCorpus() {
+		DataSource ds = DataSource.CreateConnection("any", "wordbase", "microcore", "19871013", "UTF8");
+		if(ds == null) {
+			System.out.print("ds is Null.\n");
+			return;
+		}
+		if(ds.State!= DataSource.ConnectionState.Opened)
+			ds.Open();
+		
+		boolean res = Corpus.IsPhraseWithConn("中国人们", ds);
+		System.out.print(res+"\n");
+		
+		res = Corpus.IsAuxWithConn("哈", ds);
+		System.out.print(res+"\n");
+		
 	}
 	
 	static void testSynth() throws Exception {
@@ -251,19 +271,18 @@ public class Program {
 	
 	public static void testSegment() throws Exception {
 		DataSource conn = new DataSource();
-		conn.DbAddress="202.117.15.72";
+		conn.DbAddress="any";
 		conn.DataBase="wordbase";
 		conn.User="microcore";
 		conn.Password="19871013";
-		conn.Encoding="utf8";
+		conn.Encoding="UTF8";
 		
 		conn.Open();
-		//conn.Close();
 		
 		System.out.println("Start to segmentate.");
 		
         CWSEngine engine = new CWSEngine();
-        engine.ConnectionString = conn.ConnectionString;
+        engine.DataSrc = conn;
        
         String text = "";
         
