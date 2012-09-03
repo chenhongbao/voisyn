@@ -177,7 +177,7 @@ public class CWMergerRules extends CWMerger {
 
 		}
 		
-		word.Word += "|";
+		word.Word = "|" + word.Word;
 
 		return end + 1;
 	}
@@ -217,7 +217,11 @@ public class CWMergerRules extends CWMerger {
 		int index = start;
 		String tmp = "";
 		do {
-			tmp += words.get(index).Word +"|";
+			if(words.get(index).Word.length() >1) {
+				tmp += "|" + words.get(index).Word;
+			} else {
+				tmp += words.get(index).Word;
+			}
 			index += 1;
 			
 			if (index >= words.size())
