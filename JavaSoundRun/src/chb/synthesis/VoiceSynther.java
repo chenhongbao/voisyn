@@ -15,7 +15,7 @@ import chb.math.Numerics;
  * @author Hongbao Chen
  * 
  */
-public class VoiceSynthesizer {
+public class VoiceSynther {
 
 	public int AVERAGE_WINDOW_HALF = 100;
 	

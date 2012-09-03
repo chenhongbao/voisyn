@@ -16,4 +16,10 @@
 			<table name="CHARACTER_WAVE_LIST_LEVEL_0" location="CHARACTER_WAVE_LIST_LEVEL_0.dbx" />
 		</database>
 	</databases>
+	<waves>
+		<wave name="basic" location="wav/" />
+	</waves>
+	<rules>
+		<rule name="basic" location="rule"  />
+	</rules>
 </datasource>

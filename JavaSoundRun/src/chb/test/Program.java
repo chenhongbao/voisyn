@@ -32,7 +32,7 @@ import chb.segment.CWSegment;
 import chb.segment.CWSolverDP;
 import chb.segment.CWWord;
 import chb.segment.CWWordComparater;
-import chb.synthesis.VoiceSynthesizer;
+import chb.synthesis.VoiceSynther;
 import chb.wave.Wave;
 import chb.math.Numerics;
 import chb.plot.*;
@@ -66,7 +66,6 @@ public class Program {
 		//testSynth();
 		//testCorpus();
 
-
 	}
 	
 	static void testCorpus() {
@@ -91,7 +90,7 @@ public class Program {
 		wave.ReadFrom("wav/wo_01.wav");
 		short[] data = wave.Get16Bits();
 		
-		VoiceSynthesizer vs = new VoiceSynthesizer();
+		VoiceSynther vs = new VoiceSynther();
 		int[] peakx = vs.GetPeak(data);
 		List<short[]> segs = vs.GetSeg(data, peakx);
 		short[]  z =null;
