@@ -73,6 +73,7 @@ public class DataTable implements Table {
 			return null;
 		return this.Rows.get(key);
 	}
+
 	@Override
 	public void SetUp() {
         File file = new File(this.Path);
@@ -85,8 +86,6 @@ public class DataTable implements Table {
 					new FileInputStream(file), this.Encoding);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			if(intext!=null)
-				intext.close();
 			return;
 		} 
         

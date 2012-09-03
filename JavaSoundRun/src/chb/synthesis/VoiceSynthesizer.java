@@ -18,6 +18,8 @@ import chb.math.Numerics;
 public class VoiceSynthesizer {
 
 	public int AVERAGE_WINDOW_HALF = 100;
+	
+	// Define how many peaks should be used to produce a newly inserted frame.
 	public int DUPLICATE_WINDOW = 2;
 	public double INTERVAL_RATIO = 0.95D;
 	public double TRIM_PORTION = 0.05D;
