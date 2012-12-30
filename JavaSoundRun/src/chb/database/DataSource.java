@@ -104,7 +104,7 @@ public class DataSource {
 		//Read the user_info.xml, and decide whether user exists in the XML file.
 		//Read in all the databases related to that user, and the tables in the 
 		//databases.
-		if(IsUserValid(this.User, this.Password, this.DataBase) == false)
+		if(!IsUserValid(this.User, this.Password, this.DataBase))
 			return;
 		String path = "/datasource/databases/database[@name='"
 			+this.DataBase+"']/@address";
@@ -113,7 +113,7 @@ public class DataSource {
 			return;
 		
 		this.DbAddress = list.item(0).getNodeValue();
-		if(this.DbAddress.endsWith("/") == false)
+		if(!this.DbAddress.endsWith("/"))
 			this.DbAddress += "/";
 		
 		path = "/datasource/databases/database[@name='"
@@ -156,9 +156,13 @@ public class DataSource {
 	public boolean IsUserValid(String user, String passwd, String db)  {
 		try {
 			SetUpContext();
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-		}
+		} catch(SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 		
 		String path = "/datasource/users/user[@name='"
 				+user+"' and @password='"
@@ -167,10 +171,8 @@ public class DataSource {
 		
 		Object res = ExecXpath(path,  XPathConstants.NODESET);
 		NodeList nodes = (NodeList )res;
-		if(nodes.getLength() == 0)
-			return false;
-		else 
-			return true;
+
+        return 0 != nodes.getLength();
 
 	}
 	
