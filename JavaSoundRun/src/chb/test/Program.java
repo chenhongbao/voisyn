@@ -103,14 +103,14 @@ public class Program {
 		CData cdata = new CData(null, z, null);
 		CPlot.Plot(cdata, true);
 		
-		short[] data1 = vs.GetNarrow(1.0D, 0.5D, 0.5D, data, vs.GetPeak(data));
+		short[] data1 = vs.ChangeLength(1.0D, 0.5D, 0.5D, data, vs.GetPeak(data));
 		
 		cdata.setY(data);
 		CPlot plot = CPlot.Plot("origin",CPlot.EAST, cdata, false);
 		cdata.setY(data1);
 		CPlot.Plot(plot,"narrow", cdata, true);
 		
-		short[] data2 = vs.GetEmotion(2.0, 1.5, 0.5, data, vs.GetPeak(data));
+		short[] data2 = vs.GetLoudness(2.0, 1.5, 0.5, data, vs.GetPeak(data));
 		cdata.setY(data2);
 		CPlot.Plot("emotion", CPlot.EAST, cdata, true);
 		

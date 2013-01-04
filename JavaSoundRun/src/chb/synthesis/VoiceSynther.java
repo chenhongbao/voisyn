@@ -262,8 +262,8 @@ public class VoiceSynther {
 	 * @param peakx the indexes of all peaks in the samples.
 	 * @return the extended or shortened samples.
 	 */
-	public short[] GetNarrow(double allrate, double before_peak_rate,
-			double after_peak_rate, short[] x, int[] peakx) {
+	public short[] ChangeLength(double allrate, double before_peak_rate,
+                                double after_peak_rate, short[] x, int[] peakx) {
 
 		allrate = Math.abs(allrate);
 		before_peak_rate = Math.abs(before_peak_rate);
@@ -647,8 +647,8 @@ public class VoiceSynther {
 	 * @param peakx the indexes of the peaks in the samples.
 	 * @return the windowed samples, should have emotion effects.
 	 */
-	public double[] GetEmotionWin(double start, double duration, 
-			double end, short[] x, int[] peakx) {
+	public double[] GetLoudnessWin(double start, double duration,
+                                   double end, short[] x, int[] peakx) {
 		
 		int pi = GetPeakIndex(x, peakx);
 		/** 
@@ -700,7 +700,7 @@ public class VoiceSynther {
 	 * @param x the samples.
 	 * @return the unsupressed samples that have been windowed.
 	 */
-	public long[] GetEmotionAdd(double[] win, short[] x) {
+	public long[] GetLoudnessAdd(double[] win, short[] x) {
 		long[] z = new long[win.length];
 		for(int i=0; i<z.length; ++i)
 			z[i] = (int)Math.floor(win[i]*x[i]);
@@ -715,9 +715,9 @@ public class VoiceSynther {
 	 * @param x the samples.
 	 * @return the final windowed samples.
 	 */
-	public short[] GetEmotionAddSupress(double[] win, short[] x) {
+	public short[] GetLoudnessAddSupress(double[] win, short[] x) {
 		
-		long[] res = GetEmotionAdd(win, x);
+		long[] res = GetLoudnessAdd(win, x);
 		return Numerics.SupressS(res);
 	}
 	
@@ -730,11 +730,11 @@ public class VoiceSynther {
 	 * @param peakx the indexes of the peaks in the samples.
 	 * @return the final emotional voice samples.
 	 */
-	public short[] GetEmotion(double start, double duration, 
-			double end, short[] x, int[] peakx) {
+	public short[] GetLoudness(double start, double duration,
+                               double end, short[] x, int[] peakx) {
 		
-		double[] W = GetEmotionWin(start, duration, end, x, peakx);
-		return GetEmotionAddSupress(W, x);
+		double[] W = GetLoudnessWin(start, duration, end, x, peakx);
+		return GetLoudnessAddSupress(W, x);
 	}
 	
 	/**
@@ -792,5 +792,15 @@ public class VoiceSynther {
 		// Here z2 should be before z1.
 		return GetConnect(z2, z1);
 	}
+
+    /**
+     * Change the fundamental frequency of the audio by changing the
+     * distance between two pitches.
+     * @return
+     */
+    public double[] ChangeFundFreq() {
+        //TODO Implement this method.
+         return null;
+    }
 
 }
