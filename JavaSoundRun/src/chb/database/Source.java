@@ -15,6 +15,7 @@ public interface Source {
 
     /**
      * Open the database and set up all the corpus data.
+     *
      */
     void Open();
 
