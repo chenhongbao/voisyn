@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  * @author Administrator
  * 
  */
-public class DataSource {
+public class DataSource implements Source {
 
 	public Integer State;
 
@@ -51,7 +51,8 @@ public class DataSource {
 	 * @param name the table name.
 	 * @return the Table instance.
 	 */
-	public Table getTable(String name) {
+	@Override
+    public Table getTable(String name) {
 		if(name == null || name.length() == 0)
 			return null;
 		
@@ -93,7 +94,8 @@ public class DataSource {
 
 	}
 
-	public void Open() {
+	@Override
+    public void Open() {
 		// If the database has been opened, but closed later, just change its state 
 		// and leave it.
 		if(this.ReOpened) {
@@ -139,7 +141,8 @@ public class DataSource {
 
 	}
 
-	public void Close() throws SQLException {
+	@Override
+    public void Close() throws SQLException {
 		//Clear all the resources related to that user.
 		this.ReOpened = true;
 		this.State = DataSource.ConnectionState.Closed;
@@ -153,7 +156,8 @@ public class DataSource {
 	 * @param db the database name.
 	 * @return true if the user is valid and false if he is not.
 	 */
-	public boolean IsUserValid(String user, String passwd, String db)  {
+	@Override
+    public boolean IsUserValid(String user, String passwd, String db)  {
 		try {
 			SetUpContext();
 		} catch (ParserConfigurationException e) {

@@ -19,7 +19,7 @@ public class Corpus {
 	 * @return True if the word exists in the database and vice versa.ss
 	 */
 	public static boolean IsPhraseWithConn(String s,
-			DataSource conn) {
+			Source conn) {
 
         Table word = conn.getTable("WORD_LIST_LEVEL_0");
         Table idiom = conn.getTable("IDIOM_LIST_LEVEL_0");
@@ -38,7 +38,7 @@ public class Corpus {
 	 * @return True if the word is an auxiliary word and vice versa.ss
 	 */
 	public static boolean IsAuxWithConn(String s,
-			DataSource conn) {
+			Source conn) {
         
 
 		Table charac = conn.getTable("CHARACTER_LIST_LEVEL_5");
