@@ -7,8 +7,7 @@ public class AsciiChineseNumber {
 
 	/**
 	 * 测试程序的可行性
-	 * 
-	 * @param args
+	 *
 	 */
 	public static void test() {
 		System.out.println("\n--------将数字转换成中文金额的大写形式------------\n");
@@ -18,7 +17,6 @@ public class AsciiChineseNumber {
 		// 如果转换过后是一个空串，则不输出屏幕
 		if (!"".equals(s)) {
 			System.out.println("转换成中文后为：" + s);
-			;
 		}
 		System.out.println("\n---------------------------------------------");
 	}
