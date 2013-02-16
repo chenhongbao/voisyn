@@ -36,16 +36,23 @@ public class WaveLoader {
 	private static String initdoc = "user_info.xml";
 	
 	/**
-	 * Constructor. It will laod the file paths into Map<String, String>.
+	 * Constructor. It will load the file paths into Map<String, String>.
 	 */
 	public WaveLoader() {
 		this.WavePaths = new HashMap<String, String>();
 		try {
 			this.SetUpContext();
-		} catch (ParserConfigurationException | SAXException | IOException e) {
+		} catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            return;
+        }
+        catch(SAXException e) {
 			e.printStackTrace();
 			return;
-		}
+		}  catch(IOException e) {
+            e.printStackTrace();
+            return;
+        }
 		
 		String xpath = "/datasource/waves/wave";
 		NodeList list = (NodeList)this.ExecXpath(xpath,  XPathConstants.NODESET);
