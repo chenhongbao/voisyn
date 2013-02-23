@@ -53,7 +53,7 @@ public class TextUtility {
 	 */
 	public static String ChineseNumberBig2Small(String number) {
 		Set<String> set = CHN_NUMBER_MAP.keySet();
-		String res = number;;
+		String res = number;
 		for(String s: set) {
 			String rep = CHN_NUMBER_MAP.get(s);
 			res = res.replaceAll(s, rep);
@@ -169,7 +169,7 @@ public class TextUtility {
 			return true;
 		if(codePoint >= 0xFA70 && codePoint <= 0xFAD9)
 			return true;
-		
+
 		return false;
 	}
 
