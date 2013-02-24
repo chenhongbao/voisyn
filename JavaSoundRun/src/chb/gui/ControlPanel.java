@@ -17,6 +17,15 @@ public class ControlPanel extends JFrame {
     // The default title of the main frame window.
     public String WIN_TITLE = "";
 
+    // Default size.
+    protected final static int WIN_DEFAULT_HEIGHT = 400;
+    protected final static int WIN_DEFAULT_WIDTH = 700;
+
+    // Default layout settings.
+    protected final static int WIN_ROWS = 10;
+    protected final static int WIN_COLS = 10;
+    protected final static int WIN_VGAP = 0;
+    protected final static int WIN_HGAP = 0;
 
     public ControlPanel() throws HeadlessException {
         super();
@@ -64,8 +73,8 @@ public class ControlPanel extends JFrame {
      * Set the size of main window.
      */
     private void setCPSize() {
-        this.WIN_WIDTH = 700;
-        this.WIN_HEIGHT = 400;
+        this.WIN_WIDTH = ControlPanel.WIN_DEFAULT_WIDTH;
+        this.WIN_HEIGHT = ControlPanel.WIN_DEFAULT_HEIGHT;
     }
 
     /**
@@ -78,5 +87,9 @@ public class ControlPanel extends JFrame {
 
         super.setSize(this.WIN_WIDTH, this.WIN_HEIGHT);
         super.setResizable(false);
+    }
+
+    private void setCPLayout() {
+        super.setLayout(new GridLayout(10, 10, 1, 1));
     }
 }
