@@ -38,8 +38,8 @@ public class Program {
         //testJDBC();
         //testText();
         //testSegment();
+        //testGui();
         try {
-            testGui();
 
             System.out.print("[INFO]Main function exits.\n");
         } catch (Exception e) {
@@ -453,7 +453,7 @@ public class Program {
         }
 
         try {
-            wave.ReadFrom("E:\\labdata\\wo_short.wav");
+            wave.ReadFrom("./tmp/canon.txt.wav");
             wave.AsynPlay();
             System.out.println("AsynPay().");
             wave.AsynJoin();

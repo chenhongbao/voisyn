@@ -174,19 +174,28 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                     break;
                 }
             }
-            if (new File(currentName).exists() == false) {
+
+            File file = new File(currentName);
+
+            if (file.exists() == false) {
                 JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在，请先分析文本文件。");
                 return false;
             }
 
             playbackMonitor.repaint();
             try {
-                currentSound = AudioSystem.getAudioInputStream((URL) object);
+                if (file.canRead() == false) {
+                    file.setReadable(true);
+                }
+                currentSound = AudioSystem.getAudioInputStream(file);
             } catch (Exception e) {
                 try {
-                    currentSound = MidiSystem.getSequence((URL) object);
+                    if (file.canRead() == false) {
+                        file.setReadable(true);
+                    }
+                    currentSound = MidiSystem.getSequence(file);
                 } catch (InvalidMidiDataException imde) {
-                    System.out.println("Unsupported audio file.");
+                    System.out.println("2-Unsupported audio file.");
                     return false;
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -199,17 +208,27 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             currentName = ((File) object).getName();
             currentName += ".wav";
             currentName = "./tmp/" + currentName;
-            if (new File(currentName).exists() == false) {
+
+            File file = new File(currentName);
+
+            if (file.exists() == false) {
                 JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在，请先分析文本文件。");
                 return false;
             }
 
             playbackMonitor.repaint();
             try {
-                currentSound = AudioSystem.getAudioInputStream((File) object);
+
+                if (file.canRead() == false) {
+                    file.setReadable(true);
+                }
+                currentSound = AudioSystem.getAudioInputStream(file);
             } catch (Exception e1) {
                 try {
-                    FileInputStream is = new FileInputStream((File) object);
+                    if (file.canRead() == false) {
+                        file.setReadable(true);
+                    }
+                    FileInputStream is = new FileInputStream(file);
                     currentSound = new BufferedInputStream(is, 1024);
                 } catch (Exception e3) {
                     e3.printStackTrace();
@@ -278,7 +297,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 seekSlider.setMaximum((int) (sequencer.getMicrosecondLength() / 1000));
 
             } catch (InvalidMidiDataException imde) {
-                System.out.println("Unsupported audio file.");
+                System.out.println("3-Unsupported audio file.");
                 currentSound = null;
                 return false;
             } catch (Exception ex) {
