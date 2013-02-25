@@ -51,7 +51,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
     boolean bump;
     boolean paused = false;
     boolean analyzed = false;
-    JButton startB, pauseB, analyB, loopB, prevB, nextB;
+    JButton startB, pauseB, analyB, prevB, nextB;
     JTable table;
     JSlider panSlider, gainSlider;
     JSlider seekSlider;
@@ -69,6 +69,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
     private String prevB_name = "上一个";
     private String stopB_name = "停止";
     private String resumB_name = "继续";
+    private String gain_txt = "音量";
+    private String pan_txt = "均衡";
 
 
     public ControlPanel(String dirName) {
@@ -415,23 +417,22 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
 
 
     public void run() {
-        do {
-            table.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-            for (; num < sounds.size() && thread != null; num++) {
-                table.scrollRectToVisible(new Rectangle(0, (num + 2) * (table.getRowHeight() + table.getRowMargin()), 1, 1));
-                table.setRowSelectionInterval(num, num);
-                if (loadSound(sounds.get(num)) == true) {
-                    playSound();
-                }
-                // take a little break between sounds
-                try {
-                    thread.sleep(222);
-                } catch (Exception e) {
-                    break;
-                }
+        table.scrollRectToVisible(new Rectangle(0, 0, 1, 1));
+        for (; num < sounds.size() && thread != null; num++) {
+            table.scrollRectToVisible(new Rectangle(0, (num + 2) * (table.getRowHeight() + table.getRowMargin()), 1, 1));
+            table.setRowSelectionInterval(num, num);
+            if (loadSound(sounds.get(num)) == true) {
+                playSound();
             }
-            num = 0;
-        } while (loopB.isSelected() && thread != null);
+            // take a little break between sounds
+            try {
+                thread.sleep(222);
+            } catch (Exception e) {
+                break;
+            }
+        }
+        num = 0;
+
 
         if (thread != null) {
             startB.doClick();
@@ -526,14 +527,14 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             panSlider = new JSlider(-100, 100, 0);
             panSlider.addChangeListener(this);
             TitledBorder tb = new TitledBorder(new EtchedBorder());
-            tb.setTitle("Pan = 0.0");
+            tb.setTitle(pan_txt + " = 0.0");
             panSlider.setBorder(tb);
             p5.add(panSlider);
 
             gainSlider = new JSlider(0, 100, 80);
             gainSlider.addChangeListener(this);
             tb = new TitledBorder(new EtchedBorder());
-            tb.setTitle("Gain = 80");
+            tb.setTitle(gain_txt + " = 80");
             gainSlider.setBorder(tb);
             p5.add(gainSlider);
             add(p5);
@@ -555,7 +556,6 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 if (currentSound instanceof Clip) {
                     ((Clip) currentSound).setFramePosition(value);
                 } else if (currentSound instanceof Sequence) {
-                    long dur = ((Sequence) currentSound).getMicrosecondLength();
                     sequencer.setMicrosecondPosition(value * 1000);
                 } else if (currentSound instanceof BufferedInputStream) {
                     long dur = sequencer.getMicrosecondLength();
@@ -566,13 +566,13 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             }
             TitledBorder tb = (TitledBorder) slider.getBorder();
             String s = tb.getTitle();
-            if (s.startsWith("Pan")) {
+            if (s.startsWith(pan_txt)) {
                 s = s.substring(0, s.indexOf('=') + 1) + s.valueOf(value / 100.0);
                 if (currentSound != null) {
                     setPan();
                 }
             } else {
-                if (s.startsWith("Gain")) {
+                if (s.startsWith(gain_txt)) {
                     s = s.substring(0, s.indexOf('=') + 1) + s.valueOf(value);
                     if (currentSound != null) {
                         setGain();
@@ -660,8 +660,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
 
         String welcomeStr = "语音合成系统";
         Thread pbThread;
-        Color black = new Color(20, 20, 20);
-        Color jfcBlue = new Color(204, 204, 255);
+        Color black = new Color(20, 20, 25);
+        Color jfcBlue = new Color(255, 255, 255);
         Color jfcDarkBlue = jfcBlue.darker();
         Font font24 = new Font("serif", Font.BOLD, 24);
         Font font28 = new Font("serif", Font.BOLD, 28);
@@ -786,7 +786,6 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
         private String applyB_name = "应用";
         private String selc_text = "已选的";
         private String all_text = "全部";
-        private String loopB_name = "循环";
         private final String file_text = "文件或目录";
         private final String addB_name = "添加";
         private final String deleteB_name = "删除";
@@ -866,10 +865,6 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             item = menu.add(new JMenuItem(all_text));
             item.addActionListener(this);
             p1.add(menuBar);
-
-            loopB = addButton(loopB_name, p1);
-            loopB.setBackground(Color.CYAN);
-            loopB.setSelected(false);
 
             inspecB = addButton(inspecB_name, p1);
             inspecB.setBackground(Color.CYAN);
@@ -967,9 +962,6 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                     frame = null;
                     errStr = null;
                     playbackMonitor.repaint();
-                } else if (button.getText().equals(loopB_name)) {
-                    loopB.setSelected(!loopB.isSelected());
-                    loopB.setBackground(loopB.isSelected() ? Color.CYAN : Color.RED);
                 } else if (button.getText().equals(inspecB_name)) {
                     CPText txt = new CPText();
                     // Locate the text viewer.
@@ -1110,7 +1102,12 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             saveB.setBackground(Color.CYAN);
             saveB.addActionListener(this);
 
-            this.add(new JScrollPane(text));
+            // Add scrolling to JTextArea.
+            JScrollPane scrollPane = new JScrollPane(text);
+            EmptyBorder eb = new EmptyBorder(5, 5, 2, 5);
+            scrollPane.setBorder(new CompoundBorder(eb, new EtchedBorder()));
+
+            this.add(scrollPane);
             this.add(saveB);
             this.setSize(WIDTH + 50, HEIGHT + 50);
             this.setTitle(DIA_TITLE);
