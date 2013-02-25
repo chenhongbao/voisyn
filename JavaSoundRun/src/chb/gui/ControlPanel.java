@@ -22,9 +22,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
@@ -175,7 +173,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 }
             }
             if (new File(currentName).exists() == false) {
-                JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在。");
+                JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在，请先分析文本文件。");
                 return false;
             }
 
@@ -200,7 +198,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
             currentName += ".wav";
             currentName = "./tmp/" + currentName;
             if (new File(currentName).exists() == false) {
-                JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在。");
+                JOptionPane.showMessageDialog(this, "文件\'" + currentName + "\'不存在，请先分析文本文件。");
                 return false;
             }
 
@@ -642,6 +640,14 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 pauseB.setText(pauseB_name);
                 num = num + 1 == sounds.size() ? -1 : num;
                 bump = true;
+            } else if (button.getText().equals(analyB_name)) {
+
+                analyB.setText(analyB_name + "中");
+                analyB.setEnabled(false);
+                startB.setEnabled(false);
+
+                //TODO Starts a thread to do TTS
+                // The thread should have an reference to the two buttons.
             }
         }
     }  // End CPControls
@@ -863,7 +869,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
 
             loopB = addButton(loopB_name, p1);
             loopB.setBackground(Color.CYAN);
-            loopB.setSelected(true);
+            loopB.setSelected(false);
 
             inspecB = addButton(inspecB_name, p1);
             inspecB.setBackground(Color.CYAN);
@@ -965,8 +971,19 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                     loopB.setSelected(!loopB.isSelected());
                     loopB.setBackground(loopB.isSelected() ? Color.CYAN : Color.RED);
                 } else if (button.getText().equals(inspecB_name)) {
-                    //TODO Display the content of the selected text in table.
-                    JOptionPane.showMessageDialog(this, "Show text.");
+                    CPText txt = new CPText();
+                    // Locate the text viewer.
+                    txt.setLocation(200, 200);
+                    // Set content of text viewer.
+                    num = table.getSelectedRow();
+                    if (num == -1) {
+                        JOptionPane.showMessageDialog(this, "请选择在表中一个文件。");
+                        return;
+                    }
+                    String path = ((File) sounds.get(num)).getAbsolutePath();
+                    txt.loadCPText(path);
+
+                    txt.setVisible(true);
                 }
                 startB.setEnabled(sounds.size() != 0);
             }
@@ -1062,6 +1079,145 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                         RenderingHints.VALUE_ANTIALIAS_OFF);
                 g2.drawString(contributors, x, d.height - 5);
             }
+        }
+    }
+
+    /**
+     * Text file viewer for ControlPanel.
+     */
+    class CPText extends JFrame implements ActionListener {
+
+        JTextArea text;
+        JButton saveB;
+
+        public String text_path = "";
+
+        private final static int WIDTH = 310;
+        private final static int HEIGHT = 270;
+        private final static int ROWS = 15;
+        private final static int COLS = 30;
+
+        private final String saveB_name = "保存";
+        private final String DIA_TITLE = "文本查看器";
+
+        public CPText() {
+            this.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+            text = new JTextArea();
+            text.setColumns(COLS);
+            text.setRows(ROWS);
+            saveB = new JButton(saveB_name);
+            saveB.setBackground(Color.CYAN);
+            saveB.addActionListener(this);
+
+            this.add(new JScrollPane(text));
+            this.add(saveB);
+            this.setSize(WIDTH + 50, HEIGHT + 50);
+            this.setTitle(DIA_TITLE);
+            this.setResizable(false);
+            this.text.setLineWrap(true);
+
+            this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        }
+
+        public void setCPFile(String p) {
+            text_path = p;
+        }
+
+        public void addCPText(String t) {
+            if (t == null) {
+                return;
+            }
+
+            text.append(t);
+        }
+
+        public boolean loadCPText(String f) {
+            setCPFile(f);
+
+            File file = new File(text_path);
+            if (file.exists() == false) {
+                int res = JOptionPane.showConfirmDialog(this, "文件\'" + text_path + "\'不存在，需要创建吗？");
+                if (res == JOptionPane.OK_OPTION) {
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(this, "不能创建文件\'" + text_path + "\'。");
+                        return false;
+                    }
+                }
+            }
+
+            if (file.canRead() == false) {
+                file.setReadable(true);
+            }
+
+            try {
+
+                FileInputStream fis = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+
+                String tmp = null;
+                while ((tmp = br.readLine()) != null) {
+                    addCPText(tmp + "\n");
+                }
+
+                br.close();
+                isr.close();
+                fis.close();
+
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(this, "找不到文件\'" + text_path + "\'。");
+                return false;
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "文件\'" + text_path + "\'读取错误。");
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+            if (src instanceof JButton) {
+                JButton bt = (JButton) src;
+                if (bt.getText().equals(saveB_name)) {
+
+                    File f = new File(text_path);
+                    if (f.exists() == false) {
+                        try {
+                            f.createNewFile();
+                        } catch (IOException e1) {
+                            JOptionPane.showMessageDialog(this, "不能创建文件\'" + text_path + "\'。");
+                            return;
+                        }
+                    }
+                    f.setWritable(true);
+
+                    FileWriter fw = null;
+                    try {
+                        fw = new FileWriter(f);
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(this, "不能写入文件\'" + text_path + "\'。");
+                        return;
+                    }
+                    PrintWriter pw = new PrintWriter(fw);
+                    if (text == null) {
+                        JOptionPane.showMessageDialog(this, "内部错误。");
+                        return;
+                    }
+
+                    String t = text.getText();
+                    pw.print(t);
+                    pw.flush();
+                    pw.close();
+                }
+
+
+            }
+
         }
     }
 
