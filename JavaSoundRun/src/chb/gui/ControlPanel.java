@@ -198,7 +198,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                     System.out.println("2-Unsupported audio file.");
                     return false;
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    chb.Utility.Log(e.getStackTrace());
                     currentSound = null;
                     return false;
                 }
@@ -230,8 +230,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                     }
                     FileInputStream is = new FileInputStream(file);
                     currentSound = new BufferedInputStream(is, 1024);
-                } catch (Exception e3) {
-                    e3.printStackTrace();
+                } catch (Exception e) {
+                    chb.Utility.Log(e.getStackTrace());
                     currentSound = null;
                     return false;
                 }
@@ -281,8 +281,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 clip.open(stream);
                 currentSound = clip;
                 seekSlider.setMaximum((int) stream.getFrameLength());
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                chb.Utility.Log(e.getStackTrace());
                 currentSound = null;
                 return false;
             }
@@ -300,8 +300,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 System.out.println("3-Unsupported audio file.");
                 currentSound = null;
                 return false;
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                chb.Utility.Log(e.getStackTrace());
                 currentSound = null;
                 return false;
             }
@@ -473,8 +473,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 FloatControl panControl =
                         (FloatControl) clip.getControl(FloatControl.Type.PAN);
                 panControl.setValue(value / 100.0f);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                chb.Utility.Log(e.getStackTrace());
             }
         } else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) {
             for (int i = 0; i < channels.length; i++) {
@@ -495,8 +495,8 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 float dB = (float)
                         (Math.log(value == 0.0 ? 0.0001 : value) / Math.log(10.0) * 20.0);
                 gainControl.setValue(dB);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Exception e) {
+                chb.Utility.Log(e.getStackTrace());
             }
         } else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) {
             for (int i = 0; i < channels.length; i++) {
@@ -969,7 +969,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                         try {
                             sounds.add(new URL(name));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            chb.Utility.Log(ex.getStackTrace());
                         }
                         ;
                     } else {

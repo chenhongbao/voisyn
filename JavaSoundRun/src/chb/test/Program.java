@@ -411,7 +411,7 @@ public class Program {
         try {
             fileout = new PrintWriter(file);
         } catch (FileNotFoundException e) {
-            System.out.print(e.getMessage());
+            System.out.print(e.getStackTrace() ());
             e.printStackTrace();
         }
 

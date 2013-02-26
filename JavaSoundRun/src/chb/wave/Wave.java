@@ -1,26 +1,9 @@
 package chb.wave;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.sound.sampled.*;
+import java.io.*;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import java.nio.*;
 
 /**
  * Wave class represents the wave data. It provides interfaces to concatenate
@@ -375,7 +358,7 @@ public class Wave {
             return this.ReadFrom(instream);
         } catch (Exception e) {
             throw new Exception("Wave: Error when reading from audio stream \'"
-                    + file.getAbsolutePath() + "\'.\n" + e.getMessage());
+                    + file.getAbsolutePath() + "\'.\n" + e.getStackTrace());
         }
 
     }
@@ -486,7 +469,7 @@ public class Wave {
      * it can be resumed by the following start() method.</p>
      */
     public void Stop() {
-        if(this.auline == null) {
+        if (this.auline == null) {
             return;
         }
 
