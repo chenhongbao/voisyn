@@ -11,6 +11,8 @@ import chb.plot.CData;
 import chb.plot.CPlot;
 import chb.segment.*;
 import chb.synthesis.VoiceSynther;
+import chb.template.TInfo;
+import chb.template.metatemplate.MTEngine;
 import chb.wave.Wave;
 import org.math.plot.Plot2DPanel;
 
@@ -20,7 +22,9 @@ import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 
 /**
@@ -40,7 +44,7 @@ public class Program {
         //testSegment();
         //testGui();
         try {
-
+            testTemplate();
             System.out.print("[INFO]Main function exits.\n");
         } catch (Exception e) {
 
@@ -53,6 +57,22 @@ public class Program {
         //testSynth();
         //testCorpus();
 
+    }
+
+    static void testTemplate() {
+        /* Test MTEngine. */
+        MTEngine mte = new MTEngine();
+        mte.loadTemplate("./JavaSoundRun/tmpl/meta.xml");
+
+        String[] mte_test = new String[]{"。", "，", "：", "’", "中国", "我", "中华人民", "美利坚合众国"};
+        for (String s : mte_test) {
+            TInfo inf = mte.query(s);
+            Utility.Log("Content:" + inf.content + "\nType:" + inf.type);
+            Set<Map.Entry<String, String>> set = inf.info.entrySet();
+            for (Map.Entry<String, String> e : set) {
+                Utility.Log("Info:" + e.getKey() + " --> " + e.getValue() + "\n");
+            }
+        }
     }
 
 
@@ -411,7 +431,7 @@ public class Program {
         try {
             fileout = new PrintWriter(file);
         } catch (FileNotFoundException e) {
-            System.out.print(e.getStackTrace() ());
+            System.out.print(e.getStackTrace());
             e.printStackTrace();
         }
 
