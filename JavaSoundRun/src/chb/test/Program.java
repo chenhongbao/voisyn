@@ -12,6 +12,7 @@ import chb.plot.CPlot;
 import chb.segment.*;
 import chb.synthesis.VoiceSynther;
 import chb.template.TInfo;
+import chb.template.exectemplate.ETEngine;
 import chb.template.metatemplate.MTEngine;
 import chb.wave.Wave;
 import org.math.plot.Plot2DPanel;
@@ -21,10 +22,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -59,7 +57,7 @@ public class Program {
 
     }
 
-    static void testTemplate() {
+    static void testTemplate() throws Exception {
         /* Test MTEngine. */
         MTEngine mte = new MTEngine();
         mte.loadTemplate("./JavaSoundRun/tmpl/meta.xml");
@@ -73,6 +71,19 @@ public class Program {
                 Utility.Log("Info:" + e.getKey() + " --> " + e.getValue() + "\n");
             }
         }
+
+        List<CWWord> words = new LinkedList<CWWord>();
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("中国人", 0L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("是", 3L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("世界的", 6L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("骄傲", 8L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("，", 9L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("他们", 11L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("不负虚名", 15L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("。", 16L)));
+
+        ETEngine exec = new ETEngine("./JavaSoundRun/tmpl/meta.xml", "./JavaSoundRun/tmpl/exec.xml");
+        exec.generateExecTemplate(words);
     }
 
 

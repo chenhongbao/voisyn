@@ -107,4 +107,28 @@ public class MTEngine extends TEngine {
         NodeList lst = (NodeList) res;
         return lst;
     }
+
+    /**
+     * Get pause between words.
+     *
+     * @return TInfo instance.
+     */
+    public TInfo queryBt() {
+        String xp = "//pauses/pause[@type='btword']/@msec";
+        XPath xpath = factory.newXPath();
+
+        TInfo ti = TInfo.createTInfo("");
+
+        NodeList lst = doXPath(xpath, xp);
+        if (lst == null || lst.getLength() < 1) {
+            ti.set("pause", "10");
+            ti.type = TInfo.PUNCTUATION;
+            return ti;
+        }
+
+        String v = lst.item(0).getNodeValue();
+        ti.set("pause", v);
+
+        return ti;
+    }
 }

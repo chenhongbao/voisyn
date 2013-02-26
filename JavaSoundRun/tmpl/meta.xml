@@ -5,14 +5,15 @@
         <pause type="punctuation" value="？" msec="100"></pause>
         <pause type="punctuation" value="，" msec="60"></pause>
         <pause type="punctuation" value="；" msec="60"></pause>
-        <pause type="punctuation" value="：" msec="20"></pause>
-        <pause type="punctuation" value="“" msec="10"></pause>
-        <pause type="punctuation" value="”" msec="10"></pause>
-        <pause type="punctuation" value="《" msec="10"></pause>
-        <pause type="punctuation" value="》" msec="10"></pause>
-        <pause type="punctuation" value="（" msec="10"></pause>
-        <pause type="punctuation" value="）" msec="10"></pause>
+        <pause type="punctuation" value="：" msec="40"></pause>
+        <pause type="punctuation" value="“" msec="30"></pause>
+        <pause type="punctuation" value="”" msec="30"></pause>
+        <pause type="punctuation" value="《" msec="30"></pause>
+        <pause type="punctuation" value="》" msec="30"></pause>
+        <pause type="punctuation" value="（" msec="30"></pause>
+        <pause type="punctuation" value="）" msec="30"></pause>
         <pause type="punctuation" value="*" msec="30"></pause>
+        <pause type="btword" msec="10"></pause>
     </pauses>
 
     <diaphones>

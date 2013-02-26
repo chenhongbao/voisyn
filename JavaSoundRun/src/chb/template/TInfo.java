@@ -18,6 +18,8 @@ public class TInfo {
     // Literal value of this word.
     public String content = null;
     public int type = -1;
+    // The index of the current word.
+    public int index = -1;
 
     protected TInfo(String _c) {
         this.content = _c;
