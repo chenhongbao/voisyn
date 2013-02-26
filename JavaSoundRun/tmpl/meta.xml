@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta version="1.0">
+    <pauses>
+        <pause type="period">100m/1.0</pause>
+        <pause type="comma">60m/0.6</pause>
+        <pause type="btword">20m/0.2</pause>
+    </pauses>
+
+    <diaphones>
+        <diaphone type="word" length="2">100m/1.0</diaphone>
+        <diaphone type="word" length="3">80m/0.8</diaphone>
+        <diaphone type="word" length="4">70m/0.7</diaphone>
+        <diaphone type="word" length="*">60m/0.6</diaphone>
+    </diaphones>
+</meta>
