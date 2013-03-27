@@ -1,9 +1,6 @@
-package chb.template.exectemplate;
+package chb.template;
 
 import chb.segment.CWWord;
-import chb.template.TEngine;
-import chb.template.TInfo;
-import chb.template.metatemplate.MTEngine;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;

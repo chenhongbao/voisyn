@@ -1,8 +1,6 @@
-package chb.template.metatemplate;
+package chb.template;
 
 
-import chb.template.TEngine;
-import chb.template.TInfo;
 import chb.text.TextUtility;
 import org.w3c.dom.NodeList;
 

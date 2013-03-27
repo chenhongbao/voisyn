@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <datasource>
-	<users>
-		<user name="microcore" password="19871013">
-			<db name="wordbase" />
-		</user>
-	</users>
-	<databases>
-		<database name="wordbase" address="data/wordbase" >
-			<table name="CHARACTER_LIST_LEVEL_0" location="CHARACTER_LIST_LEVEL_0.dbx" />
-			<table name="CHARACTER_LIST_LEVEL_5" location="CHARACTER_LIST_LEVEL_5.dbx" />
-			<table name="WORD_LIST_LEVEL_0" location="WORD_LIST_LEVEL_0.dbx" />
-			<table name="WORD_LIST_LEVEL_1" location="WORD_LIST_LEVEL_1.dbx" />
-			<table name="IDIOM_LIST_LEVEL_0" location="IDIOM_LIST_LEVEL_0.dbx" />
-			<table name="PROVERBE_LIST_LEVEL_0" location="PROVERBE_LIST_LEVEL_0.dbx" />
-			<table name="CHARACTER_WAVE_LIST_LEVEL_0" location="CHARACTER_WAVE_LIST_LEVEL_0.dbx" />
-		</database>
-	</databases>
-	<waves>
-		<wave name="basic" location="wav/" />
-	</waves>
-	<rules>
-		<rule name="basic" location="rule"  />
-	</rules>
+    <users>
+        <user name="microcore" password="19871013">
+            <db name="wordbase"/>
+        </user>
+    </users>
+    <databases>
+        <database name="wordbase" address="./JavaSoundRun/data/wordbase">
+            <table name="CHARACTER_LIST_LEVEL_0" location="CHARACTER_LIST_LEVEL_0.dbx"/>
+            <table name="CHARACTER_LIST_LEVEL_5" location="CHARACTER_LIST_LEVEL_5.dbx"/>
+            <table name="WORD_LIST_LEVEL_0" location="WORD_LIST_LEVEL_0.dbx"/>
+            <table name="WORD_LIST_LEVEL_1" location="WORD_LIST_LEVEL_1.dbx"/>
+            <table name="IDIOM_LIST_LEVEL_0" location="IDIOM_LIST_LEVEL_0.dbx"/>
+            <table name="PROVERBE_LIST_LEVEL_0" location="PROVERBE_LIST_LEVEL_0.dbx"/>
+            <table name="CHARACTER_WAVE_LIST_LEVEL_0" location="CHARACTER_WAVE_LIST_LEVEL_0.dbx"/>
+        </database>
+    </databases>
+    <waves>
+        <wave name="basic" location="./wav/"/>
+    </waves>
 </datasource>

@@ -1,5 +1,7 @@
 package chb.gui;
 
+import chb.synthesis.VoiceOrchestra;
+
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -665,8 +667,25 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
                 analyB.setEnabled(false);
                 startB.setEnabled(false);
 
-                //TODO Starts a thread to do TTS
                 // The thread should have an reference to the two buttons.
+                num = table.getSelectedRow();
+                if (num == -1) {
+                    JOptionPane.showMessageDialog(this, "请选择在表中一个文件。");
+                    return;
+                }
+                String path = ((File) sounds.get(num)).getAbsolutePath();
+                VoiceOrchestra vo = new VoiceOrchestra(path);
+                Thread t = new Thread(vo);
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                } finally {
+                    analyB.setText(analyB_name);
+                    analyB.setEnabled(true);
+                    startB.setEnabled(true);
+                }
             }
         }
     }  // End CPControls
@@ -1268,6 +1287,7 @@ public class ControlPanel extends JPanel implements Runnable, LineListener, Meta
         int h = 340;
         f.setLocation(screenSize.width / 2 - w / 2, screenSize.height / 2 - h / 2);
         f.setSize(w, h);
+        f.setResizable(false);
         f.setVisible(true);
 
         return;

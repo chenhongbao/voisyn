@@ -11,9 +11,9 @@ import chb.plot.CData;
 import chb.plot.CPlot;
 import chb.segment.*;
 import chb.synthesis.VoiceSynther;
+import chb.template.ETEngine;
+import chb.template.MTEngine;
 import chb.template.TInfo;
-import chb.template.exectemplate.ETEngine;
-import chb.template.metatemplate.MTEngine;
 import chb.wave.Wave;
 import org.math.plot.Plot2DPanel;
 

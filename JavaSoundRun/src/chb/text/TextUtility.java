@@ -310,7 +310,7 @@ public class TextUtility {
 
             String tmp = null;
             while ((tmp = br.readLine()) != null) {
-                txt = txt + tmp;
+                txt = txt + tmp + "\n";
             }
         } catch (FileNotFoundException e) {
             return null;
