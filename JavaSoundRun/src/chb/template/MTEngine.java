@@ -39,11 +39,10 @@ public class MTEngine extends TEngine {
                 ti.type = TInfo.PUNCTUATION;
                 xp = "//pauses/pause[@type='punctuation' and @value='" + word + "']/@msec";
             } else {
-                /* For a single, no diaphone is needed.*/
+                /* For a single, shortest diaphone.*/
                 k = "diaphone";
+                xp = "//diaphones/diaphone[@type='word' and @length='*']/@msec";
                 ti.type = TInfo.WORD;
-                ti.set(k, "-1");
-                return ti;
             }
         } else {
             k = "diaphone";

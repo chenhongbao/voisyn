@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><article>
+<word id="0" msec="80" value="中国人"/>
+<pause id="1" msec="10"/>
+<word id="2" msec="60" value="是"/>
+<pause id="3" msec="10"/>
+<word id="4" msec="80" value="世界的"/>
+<pause id="5" msec="10"/>
+<word id="6" msec="100" value="骄傲"/>
+<pause id="7" msec="10"/>
+<pause id="8" msec="60"/>
+<pause id="9" msec="10"/>
+<word id="10" msec="100" value="他们"/>
+<pause id="11" msec="10"/>
+<word id="12" msec="70" value="不负虚名"/>
+<pause id="13" msec="10"/>
+<pause id="14" msec="100"/>
+<pause id="15" msec="10"/>
+</article>
