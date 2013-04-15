@@ -1,4 +1,4 @@
-CONTENT,STRING_1
+CONTENT,SPELL
 可以,kě yǐ
 标准时间,biāo zhǔn shí jiān
 没有,méi yǒu
@@ -3544,7 +3544,7 @@ CONTENT,STRING_1
 维护,wéi hù
 急不可待,jí bù kě dài
 拼音文字,pīn yīn wén zì
-自由,
+自由,zì yóu
 机械唯物主义,jī xiè wéi wù zhǔ yì
 相信,xiānɡ xìn
 中央军事委员会,zhōnɡ yānɡ jūn shì wěi yuán huì
@@ -11480,7 +11480,8 @@ CONTENT,STRING_1
 入室弟子,rù shì dì zǐ
 梨园弟子,lí yuán dì zǐ
 泼弟子,pō dì zǐ
-中国人民,\N
+中国人,zhōnɡ ɡuó rén
+中国人民,zhōnɡ ɡuó rén mín
 生聚教训,shēnɡ jù jiào xùn
 不就,bù jiù
 乘船走马三分命,chénɡ chuán zǒu mǎ sān fēn mìnɡ
@@ -45901,6 +45902,7 @@ CONTENT,STRING_1
 顺路,shùn lù
 大熊,\N
 经书,jīnɡ shū
+南辕北辙,nán yuán běi zhé
 杂牌,zá pái
 息肉,xī ròu
 杂牌军,zá pái jūn

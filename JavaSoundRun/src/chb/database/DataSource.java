@@ -38,7 +38,7 @@ public class DataSource implements Source {
     private Document XmlDoc = null;
     private XPath XPath = null;
 
-    public static String initdoc = "user_info.xml";
+    public static String initdoc = "./JavaSoundRun/user_info.xml";
 
     private Map<String, Table> Tables = null;
 
@@ -163,10 +163,13 @@ public class DataSource implements Source {
             SetUpContext();
         } catch (ParserConfigurationException e) {
             chb.Utility.Log(e.getStackTrace());
+            return false;
         } catch (SAXException e) {
             chb.Utility.Log(e.getStackTrace());
+            return false;
         } catch (IOException e) {
             chb.Utility.Log(e.getStackTrace());
+            return false;
         }
 
         String path = "/datasource/users/user[@name='"

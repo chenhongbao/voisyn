@@ -41,9 +41,11 @@ public class Program {
         //testText();
         //testSegment();
         //testGui();
+        //testTemplate();
+        //testCorpus();
         try {
             testTemplate();
-            System.out.print("[INFO]Main function exits.\n");
+            System.out.print("测试程序退出。\n");
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -58,22 +60,25 @@ public class Program {
     }
 
     static void testTemplate() throws Exception {
-        /* Test MTEngine. */
         MTEngine mte = new MTEngine();
         mte.loadTemplate("./JavaSoundRun/tmpl/meta.xml");
-
-        String[] mte_test = new String[]{"。", "，", "：", "’", "中国", "我", "中华人民", "美利坚合众国"};
+        String[] mte_test = new String[]{"。", "，", "（", "）", "中国人",
+                "炎黄子孙", "是", "世界的", "骄傲", "他们", "不负虚名"};
         for (String s : mte_test) {
+            String msg = "";
             TInfo inf = mte.query(s);
-            Utility.Log("Content:" + inf.content + "\nType:" + inf.type);
+            msg = "内容：'"+inf.content+"'，类型：'"+inf.type;
             Set<Map.Entry<String, String>> set = inf.info.entrySet();
-            for (Map.Entry<String, String> e : set) {
-                Utility.Log("Info:" + e.getKey() + " --> " + e.getValue() + "\n");
-            }
+            for (Map.Entry<String, String> e : set)
+                msg += "'，信息：'"+e.getKey()+"'，停顿间隔：'"+e.getValue()+"'毫秒。";
+            Utility.Log(msg);
         }
 
         List<CWWord> words = new LinkedList<CWWord>();
         words.add(CWWord.CreateWord(CWSegment.CreateSegment("中国人", 0L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("（", 0L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("炎黄子孙", 0L)));
+        words.add(CWWord.CreateWord(CWSegment.CreateSegment("）", 0L)));
         words.add(CWWord.CreateWord(CWSegment.CreateSegment("是", 3L)));
         words.add(CWWord.CreateWord(CWSegment.CreateSegment("世界的", 6L)));
         words.add(CWWord.CreateWord(CWSegment.CreateSegment("骄傲", 8L)));
@@ -91,21 +96,47 @@ public class Program {
         chb.gui.ControlPanel.main(new String[0]);
     }
 
+    static String[] phrases = new String[6];
+    static String[] auxes = new String[5];
+    static {
+        phrases[0] = "青出于蓝而胜于蓝";
+        phrases[1] = "南辕北辙";
+        phrases[2] = "世界贸易组织";
+        phrases[3] = "自由";
+        phrases[4] = "奔跑";
+        phrases[5] = "不存在的";
+        auxes[0] = "是";
+        auxes[1] = "还";
+        auxes[2] = "着";
+        auxes[3] = "我";
+        auxes[4] = "你";
+    }
+
     static void testCorpus() {
-        DataSource ds = DataSource.CreateConnection("any", "wordbase", "microcore", "19871013", "UTF8");
-        if (ds == null) {
-            System.out.print("ds is Null.\n");
-            return;
+        DataSource ds = DataSource.CreateConnection("any", "wordbase",
+                "microcore", "19871013", "UTF8");
+        if (ds == null) { return; }
+        if (ds.State != DataSource.ConnectionState.Opened) { ds.Open(); }
+        int i = 1;
+        String res = "";
+        System.out.print("测试常用词（名词、动词等）：\n");
+        for (String s : phrases) {
+            boolean b = Corpus.IsPhraseWithConn(s, ds);
+            res = b ? "是词语" : "不是词语";
+            String py = Corpus.QueryPinyin(s, ds);
+            if (py == null) res += "，查询不到拼音";
+            else res += "，拼音是‘" + py + "’";
+            System.out.print("测试[" + (i++) + "] ‘" + s + "’" + res + "。\n");
         }
-        if (ds.State != DataSource.ConnectionState.Opened)
-            ds.Open();
-
-        boolean res = Corpus.IsPhraseWithConn("中国人们", ds);
-        System.out.print(res + "\n");
-
-        res = Corpus.IsAuxWithConn("哈", ds);
-        System.out.print(res + "\n");
-
+        System.out.print("测试助词：\n");
+        for (String s : auxes) {
+            boolean b = Corpus.IsAuxWithConn(s, ds);
+            res = b ? "是助词" : "不是助词";
+            String py = Corpus.QueryPinyin(s, ds);
+            if (py == null) res += "查询不到拼音";
+            else res += "，拼音是‘" + py + "’";
+            System.out.print("测试[" + (i++) + "] ‘" + s + "’" + res + "。\n");
+        }
     }
 
     static void testSynth() throws Exception {

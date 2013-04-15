@@ -46,6 +46,31 @@ public class Corpus {
 
 	}
 
+    /**
+     * Query the pinyin for the word.
+     * @param s the word
+     * @param conn the data source
+     * @return pinyin of the word in string
+     */
+    public static String QueryPinyin(String s, Source conn) {
+        if(s == null || conn == null) {
+            return null;
+        }
+
+        Table tbl = null;
+        if(s.length() == 1) {
+            tbl = conn.getTable("CHARACTER_LIST_LEVEL_0");
+        } else {
+            tbl = conn.getTable("WORD_LIST_LEVEL_1");
+        }
+
+        if(tbl.Exists(s) == false) {
+            return null;
+        } else {
+            return tbl.GetValue(s, "SPELL");
+        }
+    }
+
 	
 
 }
