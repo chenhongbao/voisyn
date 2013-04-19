@@ -75,6 +75,8 @@ public final class VoiceOrchestra implements Runnable {
 
     @Override
     public void run() {
-        //TODO Implement the synthesizing method.
+        // TODO Implement the synthesizing method.
+        // This method is under intensive testing and bug-fixing. Please wait until
+        // it is completely available.
     }
 }
