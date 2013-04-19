@@ -44,7 +44,7 @@ public class Program {
         //testTemplate();
         //testCorpus();
         try {
-            testTemplate();
+            testSegmentTimeAll();
             System.out.print("测试程序退出。\n");
         } catch (Exception e) {
 
@@ -56,6 +56,105 @@ public class Program {
         //testNumerics();
         //testSynth();
         //testCorpus();
+
+    }
+
+    public static void testSegmentTimeAll() throws Exception {
+        String p = "E:\\labdata\\segtest";
+        long[] nws = new long[6];
+        long[] ods = new long[6];
+        long[] lns = new long[6];
+        long[] res = null;
+        for(int j=0; j<10; ++j) {
+            System.out.print("第"+(j+1)+"轮\n");
+            for(int i=1; i<=6; ++i) {
+                res = testSegmentTime(p+i+".txt");
+                System.out.print("文本长度"+res[2]
+                        +"个字，改进后算法运行时间"
+                        +res[0]+"纳秒，原算法运行时间"
+                        +res[1]+"纳秒。\n");
+                nws[i-1] += res[0];
+                ods[i-1] += res[1];
+                lns[i-1] = res[2];
+            }
+        }
+
+        for(int i=1; i<=6; ++i) {
+            System.out.print("文本长度"+lns[i-1]
+                    +"个字，改进后算法运行时间"
+                    +nws[i-1]+"纳秒，原算法运行时间"
+                    +ods[i-1]+"纳秒。\n");
+        }
+    }
+
+    public static long[] testSegmentTime(String p) throws Exception{
+        DataSource conn = new DataSource();
+        conn.DbAddress = "any";
+        conn.DataBase = "wordbase";
+        conn.User = "microcore";
+        conn.Password = "19871013";
+        conn.Encoding = "UTF8";
+
+        conn.Open();
+
+        CWSEngine engine = new CWSEngine();
+        engine.DataSrc = conn;
+
+        String text = "";
+        String text1 = "";
+
+        File file = new File(p);
+        if (file.canRead() == false)
+            file.setReadable(true);
+
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(p), "UTF8");
+
+        int n = 0;
+        char[] buffer = new char[1000];
+        n = reader.read(buffer);
+        while (n > 0) {
+            for (int i = 0; i < n; ++i)
+                text += buffer[i];
+
+            n = reader.read(buffer);
+        }
+
+        reader.close();
+
+        int len = text.length();
+
+        long[] res = new long[3];
+
+        int TS_NUM = 1;
+        long start = 0L;
+        long end = 0L;
+        start = System.nanoTime();
+        for(int i=0; i< TS_NUM; ++i) {
+            text1 = Utility.CleanText(text);
+            engine.SetText(text1);
+            engine.Split(9);
+            engine.Segmentate(CWSolverDP.CreateSolver());
+            engine.Merge(new CWMergerRules(conn));
+        }
+        end = System.nanoTime();
+        res[0] = (end-start)/TS_NUM;
+
+        start = 0L;
+        end = 0L;
+        start = System.nanoTime();
+        for(int i=0; i< TS_NUM; ++i) {
+            text1 = Utility.CleanText(text);
+            engine.SetText(text1);
+            engine.Split(len);
+            engine.Segmentate(CWSolverDP.CreateSolver());
+            engine.Merge(new CWMergerRules(conn));
+        }
+        end = System.nanoTime();
+        res[1] = (end-start)/TS_NUM;
+
+        res[2] = (long)len;
+
+        return res;
 
     }
 
@@ -149,41 +248,39 @@ public class Program {
         List<short[]> segs = vs.GetSeg(data, peakx);
         short[] z = null;
         for (short[] s : segs) {
-            //CData cdata = new CData(null, s, null);
-            //CPlot.Plot(cdata, true);
             z = vs.GetConnect(z, s);
         }
 
         CData cdata = new CData(null, z, null);
-        CPlot.Plot(cdata, true);
+        CPlot.Plot("\'Wo\'", CPlot.EAST, cdata, true);
 
-        short[] data1 = vs.ChangeLength(1.0D, 0.5D, 0.5D, data, vs.GetPeak(data));
+        //short[] data1 = vs.ChangeLength(1.0D, 0.5D, 0.5D, data, vs.GetPeak(data));
 
-        cdata.setY(data);
-        CPlot plot = CPlot.Plot("origin", CPlot.EAST, cdata, false);
-        cdata.setY(data1);
-        CPlot.Plot(plot, "narrow", cdata, true);
+        //cdata.setY(data);
+        //CPlot plot = CPlot.Plot("'Wo'", CPlot.EAST, cdata, false);
+        //cdata.setY(data1);
+        //CPlot.Plot(plot, "ChangedLength 'Wo'", cdata, true);
 
         short[] data2 = vs.GetLoudness(2.0, 1.5, 0.5, data, vs.GetPeak(data));
         cdata.setY(data2);
-        CPlot.Plot("emotion", CPlot.EAST, cdata, true);
+        CPlot.Plot("Emotional \'Wo\'", CPlot.EAST, cdata, true);
 
         wave.ReadFrom("wav/shi_01.wav");
         data = wave.Get16Bits();
         cdata.setY(data);
-        CPlot.Plot("shi", CPlot.EAST, cdata, true);
+        CPlot.Plot("\'Shi\'", CPlot.EAST, cdata, true);
 
         short[] data3 = vs.GetFusion(data2, vs.GetPeak(data2), data, vs.GetPeak(data), 0.2);
         cdata.setY(data3);
-        CPlot.Plot("fusion", CPlot.EAST, cdata, true);
+        CPlot.Plot("\'Wo Shi\'", CPlot.EAST, cdata, true);
 
-        short[] data4 = vs.TrimBefore(data, vs.GetPeak(data), 0.7, 0.3);
-        cdata.setY(data4);
-        CPlot.Plot("trimbefore-shi", CPlot.EAST, cdata, true);
+        //short[] data4 = vs.TrimBefore(data, vs.GetPeak(data), 0.7, 0.3);
+        //cdata.setY(data4);
+        //CPlot.Plot("Trimebefore \'Shi\'", CPlot.EAST, cdata, true);
 
-        short[] data5 = vs.TrimAfter(data4, vs.GetPeak(data4), 0.5, 0.3);
-        cdata.setY(data5);
-        CPlot.Plot("trimafter-shi", CPlot.EAST, cdata, true);
+        //short[] data5 = vs.TrimAfter(data4, vs.GetPeak(data4), 0.5, 0.3);
+        //cdata.setY(data5);
+        //CPlot.Plot("TrimeAfter 'Shi'", CPlot.EAST, cdata, true);
     }
 
     static void testNumerics() {
@@ -338,7 +435,7 @@ public class Program {
 
         String text = "";
 
-        File file = new File("E:\\labdata\\segtest.txt");
+        File file = new File("E:\\labdata\\segtest_utf8.txt");
         if (file.canRead() == false)
             file.setReadable(true);
 
